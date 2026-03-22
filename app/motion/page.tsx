@@ -2,6 +2,7 @@
 
 import { PageShell } from '@/components/page-shell'
 import { FadeUp, MaskReveal, ParallaxLayer } from '@/components/parallax'
+import { CinematicRubikCube } from '@/components/rubik-cube'
 import { Film } from 'lucide-react'
 
 const MOTION_VIDEOS = [
@@ -127,6 +128,11 @@ export default function MotionPage() {
             </article>
             </FadeUp>
           ))}
+        </div>
+
+        {/* Cinematic Sticky Cube */}
+        <div className="my-32 -mx-6 md:mx-0 border-y border-border">
+          <CinematicRubikCube />
         </div>
 
         {/* CTA */}
