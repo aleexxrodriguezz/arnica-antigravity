@@ -270,9 +270,7 @@ export default function HomePage() {
   return (
   <PageShell>
   <ScrollDrawSection />
-  <MarqueeSection />
       <ManifestoSection />
-      <ClientsSection />
       <ServicesSection />
       <ShowcaseSection />
       <StatsSection />
