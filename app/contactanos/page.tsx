@@ -43,8 +43,8 @@ export default function PortfolioPage() {
         {/* Header */}
         <div className="mb-16">
           <FadeUp>
-            <p className="text-lg tracking-[0.4em] uppercase text-primary font-medium mb-3">
-              Nuestro trabajo
+            <p className="text-lg tracking-[0.4em] uppercase text-primary font-medium mb-3 font-sans">
+              Contáctanos
             </p>
           </FadeUp>
         </div>

@@ -38,9 +38,8 @@ export function Footer() {
         <div className="flex gap-8 text-xs tracking-widest uppercase text-muted-foreground">
           <Link href="/radio" className="hover:text-primary transition-colors">Radio</Link>
           <Link href="/produccion" className="hover:text-primary transition-colors">Producción</Link>
-          <Link href="/motion" className="hover:text-primary transition-colors">Motion</Link>
-          <Link href="/3d-render" className="hover:text-primary transition-colors">3D Render</Link>
-          <Link href="/portfolio" className="hover:text-primary transition-colors">Portfolio</Link>
+          <Link href="/motion" className="hover:text-primary transition-colors">VFX</Link>
+          <Link href="/contactanos" className="hover:text-primary transition-colors">Contáctanos</Link>
         </div>
 
         <div className="flex items-center gap-4">

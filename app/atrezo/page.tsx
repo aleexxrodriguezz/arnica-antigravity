@@ -182,8 +182,8 @@ export default function AtrezoPage() {
               { value: '00', label: 'Seg' },
             ].map(({ value, label }) => (
               <div key={label} className="border border-border bg-card/60 backdrop-blur-sm p-4 rounded-sm">
-                <p className="text-3xl font-extrabold text-primary font-mono">{value}</p>
-                <p className="text-muted-foreground text-[10px] tracking-widest uppercase mt-1">{label}</p>
+                <p className="text-3xl font-extrabold text-primary font-sans">{value}</p>
+                <p className="text-muted-foreground text-[10px] tracking-widest uppercase mt-1 font-sans">{label}</p>
               </div>
             ))}
           </div>

@@ -13,10 +13,9 @@ import { ArrowRight, Radio, Music2, Film, Box, ShoppingBag, LayoutGrid, ArrowUpR
 const SERVICES = [
   { icon: Radio,       label: 'Radio',       num: '01', desc: 'Emisoras en vivo, curación musical y producción de contenido sonoro de alto impacto.', href: '/radio' },
   { icon: Music2,      label: 'Producción',  num: '02', desc: 'IA generativa de música: crea tracks únicos, originales y libres de derechos en segundos.', href: '/produccion' },
-  { icon: Film,        label: 'Motion',      num: '03', desc: 'Motion graphics de alto impacto para marcas que quieren dejar una huella duradera.', href: '/motion' },
-  { icon: Box,         label: '3D Render',   num: '04', desc: 'Visualizaciones arquitectónicas y de producto fotorrealistas que venden antes de construir.', href: '/3d-render' },
-  { icon: ShoppingBag, label: 'Atrezo/PLV',  num: '05', desc: 'Material punto de venta y atrezo publicitario a medida que convierte espacios en experiencias.', href: '/atrezo' },
-  { icon: LayoutGrid,  label: 'Portfolio',   num: '06', desc: 'Nuestro trabajo habla por sí mismo. Cada proyecto, una historia de éxito.', href: '/portfolio' },
+  { icon: Film,        label: 'VFX',         num: '03', desc: 'Motion graphics y efectos visuales de alto impacto para marcas que quieren dejar una huella duradera.', href: '/motion' },
+  { icon: ShoppingBag, label: 'Atrezo/PLV',  num: '04', desc: 'Material punto de venta y atrezo publicitario a medida que convierte espacios en experiencias.', href: '/atrezo' },
+  { icon: LayoutGrid,  label: 'Contáctanos',  num: '05', desc: '¿Listo para crear algo extraordinario? Nuestro equipo está a un clic de distancia.', href: '/contactanos' },
 ]
 
 const STATS = [
@@ -81,7 +80,7 @@ function ManifestoSection() {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           <div>
-            <motion.h2 className="leading-tight text-foreground text-balance" style={{ fontFamily: '"Inconsolata", monospace', fontSize: 'clamp(2rem, 4vw, 3.75rem)', fontWeight: 700, x: x1, letterSpacing: '0.05em' }}>
+            <motion.h2 className="leading-tight text-foreground text-balance font-sans uppercase" style={{ fontSize: 'clamp(2rem, 4vw, 3.75rem)', fontWeight: 700, x: x1, letterSpacing: '0.05em' }}>
               MANIFIESTO
             </motion.h2>
           </div>
@@ -89,8 +88,8 @@ function ManifestoSection() {
             <FadeUp delay={0.1}><p className="text-muted-foreground text-lg leading-relaxed text-pretty">En Arnica creemos que cada marca tiene una historia extraordinaria esperando ser contada. Nuestra misión es encontrarla, amplificarla y convertirla en contenido que emocione, conecte y perdure.</p></FadeUp>
             <FadeUp delay={0.2}><p className="text-muted-foreground text-lg leading-relaxed text-pretty">Desde la producción musical con inteligencia artificial hasta renders 3D fotorrealistas, combinamos tecnología de vanguardia con un instinto creativo afilado para generar resultados que importan.</p></FadeUp>
             <FadeUp delay={0.3}>
-              <Link href="/portfolio" className="inline-flex items-center gap-2 text-primary font-semibold text-sm tracking-widest uppercase mt-4 group w-fit">
-                Ver nuestro trabajo <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              <Link href="/contactanos" className="inline-flex items-center gap-2 text-primary font-semibold text-sm tracking-widest uppercase mt-4 group w-fit">
+                Contáctanos <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </Link>
             </FadeUp>
           </div>
@@ -195,7 +194,7 @@ function TechStatement() {
             <motion.h2 className="text-foreground leading-tight text-balance font-sans" style={{ fontSize: 'clamp(1.75rem, 3.5vw, 3.75rem)', fontWeight: 700, x }}>
               <span className="text-primary">Resultados reales.</span>
             </motion.h2>
-            <FadeUp delay={0.15}><p className="mt-8 text-muted-foreground text-lg leading-relaxed max-w-xl text-pretty">Integramos modelos de IA de última generación en cada disciplina creativa — desde la composición musical generativa hasta la síntesis de imágenes 3D fotorrealistas — para ofrecer resultados imposibles de alcanzar por medios tradicionales.</p></FadeUp>
+            <FadeUp delay={0.15}><p className="mt-8 text-muted-foreground text-lg leading-relaxed max-w-xl text-pretty">Integramos modelos de IA de última generación en cada disciplina creativa — desde la composición musical generativa hasta el desarrollo de efectos visuales avanzados — para ofrecer resultados imposibles de alcanzar por medios tradicionales.</p></FadeUp>
             <FadeUp delay={0.25}>
               <div className="mt-10 flex flex-wrap gap-3">
                 {['Generative AI', 'Motion Capture', 'Neural Render', 'Procedural Audio', 'Real-time 3D'].map(tag => (
@@ -236,7 +235,7 @@ function ProcessSection() {
             <FadeUp key={n} delay={i * 0.1}>
               <div className="flex gap-6 group">
                 <div className="flex-shrink-0"><span className="text-primary opacity-30 group-hover:opacity-100 transition-opacity" style={{ fontSize: 'clamp(2rem, 3vw, 2.8rem)', fontWeight: 700 }}>{n}</span></div>
-                <div className="pt-3"><h3 className="font-bold text-foreground text-lg mb-2">{title}</h3><p className="text-muted-foreground text-sm leading-relaxed">{desc}</p></div>
+                <div className="pt-3"><h3 className="font-bold text-foreground text-lg mb-2 font-sans">{title}</h3><p className="text-muted-foreground text-sm leading-relaxed">{desc}</p></div>
               </div>
             </FadeUp>
           ))}
@@ -257,8 +256,8 @@ function CtaSection() {
             <Link href="mailto:hola@arnica.studio" className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-all duration-300 text-sm tracking-[0.15em] uppercase">
               Contactar <ArrowRight className="w-4 h-4" />
             </Link>
-            <Link href="/portfolio" className="inline-flex items-center gap-2 px-8 py-4 border border-border text-foreground font-semibold hover:border-primary hover:text-primary transition-all duration-300 text-sm tracking-[0.15em] uppercase">
-              Ver portfolio
+            <Link href="/contactanos" className="inline-flex items-center gap-2 px-8 py-4 border border-border text-foreground font-semibold hover:border-primary hover:text-primary transition-all duration-300 text-sm tracking-[0.15em] uppercase">
+              Contáctanos
             </Link>
           </div>
         </FadeUp>
