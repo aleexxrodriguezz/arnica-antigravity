@@ -1,0 +1,436 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@font-face {
+  font-family: 'SignPainter';
+  src: url('/fonts/SignPainterHouseScript.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@custom-variant dark (&:is(.dark *));
+
+/* ─── LIGHT MODE (DIA) - DEFAULT - Textos negros, títulos rosa chicle ─── */
+:root {
+  --background: #ffffff;
+  --foreground: #000000;
+  --card: #f5f5f5;
+  --card-foreground: #000000;
+  --popover: #f5f5f5;
+  --popover-foreground: #000000;
+  --primary: #FF5EB5;
+  --primary-foreground: #000000;
+  --secondary: #eeeeee;
+  --secondary-foreground: #000000;
+  --muted: #eeeeee;
+  --muted-foreground: #333333;
+  --accent: #FF5EB5;
+  --accent-foreground: #000000;
+  --destructive: #cc0000;
+  --destructive-foreground: #ffffff;
+  --border: #dddddd;
+  --input: #eeeeee;
+  --ring: #FF5EB5;
+  --radius: 0.5rem;
+  --sidebar: #f5f5f5;
+  --sidebar-foreground: #000000;
+  --sidebar-primary: #FF5EB5;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #eeeeee;
+  --sidebar-accent-foreground: #000000;
+  --sidebar-border: #dddddd;
+  --sidebar-ring: #FF5EB5;
+}
+
+/* ─── DARK MODE (NOCHE) - Textos blancos, sin rosa ─── */
+.dark {
+  --background: #000000;
+  --foreground: #ffffff;
+  --card: #0d0d0d;
+  --card-foreground: #ffffff;
+  --popover: #0d0d0d;
+  --popover-foreground: #ffffff;
+  --primary: #ffffff;
+  --primary-foreground: #000000;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #ffffff;
+  --muted: #1a1a1a;
+  --muted-foreground: #888888;
+  --accent: #ffffff;
+  --accent-foreground: #000000;
+  --destructive: #ff3333;
+  --destructive-foreground: #ffffff;
+  --border: #222222;
+  --input: #1a1a1a;
+  --ring: #ffffff;
+  --sidebar: #0d0d0d;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #ffffff;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #1a1a1a;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #222222;
+  --sidebar-ring: #ffffff;
+}
+
+@theme inline {
+  --font-sans: var(--font-space-grotesk), 'Space Grotesk', sans-serif;
+  --font-display: var(--font-space-grotesk), 'Space Grotesk', sans-serif;
+  --font-secondary: var(--font-dm-sans), 'DM Sans', sans-serif;
+  --font-mono: ui-monospace, 'Geist Mono', monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* ─── LENIS SMOOTH SCROLL RESET ───────────────────── */
+/* Prevent Lenis from injecting scroll-behavior: smooth on <html>,
+   which triggers the Next.js missing-data-scroll-behavior warning. */
+html {
+  scroll-behavior: auto !important;
+}
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    box-sizing: border-box;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-secondary);
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-sans);
+    font-size: min(var(--heading-size, 3.75rem), 3.75rem);
+    max-font-size: 3.75rem;
+  }
+  /* Hard cap: no heading ever exceeds 60px */
+  h1 { font-size: clamp(1.5rem, 4vw, 3.75rem); }
+  h2 { font-size: clamp(1.25rem, 3.5vw, 3.75rem); }
+  h3 { font-size: clamp(1rem, 2.5vw, 2rem); }
+}
+
+/* ─── GLITCH ANIMATION ─────────────────────────────── */
+@keyframes glitch-slide {
+  0%   { clip-path: inset(40% 0 61% 0); transform: translate(-2px, 0); }
+  20%  { clip-path: inset(92% 0 1% 0);  transform: translate(2px, 0); }
+  40%  { clip-path: inset(43% 0 1% 0);  transform: translate(-2px, 0); }
+  60%  { clip-path: inset(25% 0 58% 0); transform: translate(2px, 0); }
+  80%  { clip-path: inset(54% 0 7% 0);  transform: translate(-2px, 0); }
+  100% { clip-path: inset(58% 0 43% 0); transform: translate(0, 0); }
+}
+
+/* ─── MASONRY GRID ─────────────────────────────────── */
+.masonry-grid {
+  columns: 3;
+  column-gap: 1.5rem;
+}
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .masonry-grid { columns: 2; }
+}
+@media (max-width: 640px) {
+  .masonry-grid { columns: 1; }
+}
+
+/* ─── CUSTOM SCROLLBAR ─────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--background); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+/* ─── RANGE INPUT ──────────────────────────────────── */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  border: none;
+}
+
+/* ─── 3D GLASS CARD ────────────────────────────────── */
+.glass-card-parent {
+  width: 290px;
+  height: 300px;
+  perspective: 1000px;
+}
+
+.glass-card {
+  height: 100%;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #666666 0%, #4a4a4a 100%);
+  transition: all 0.5s ease-in-out;
+  transform-style: preserve-3d;
+  box-shadow: rgba(0, 0, 0, 0.15) 40px 50px 25px -40px, rgba(0, 0, 0, 0.25) 0px 25px 25px -5px;
+}
+
+.dark .glass-card {
+  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+  box-shadow: rgba(0, 0, 0, 0.5) 40px 50px 25px -40px, rgba(0, 0, 0, 0.7) 0px 25px 25px -5px;
+}
+
+.glass-card-glass {
+  transform-style: preserve-3d;
+  position: absolute;
+  inset: 8px;
+  border-radius: 55px;
+  border-top-right-radius: 100%;
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0.349) 0%, rgba(255, 255, 255, 0.815) 100%);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  transform: translate3d(0px, 0px, 25px);
+  border-left: 1px solid white;
+  border-bottom: 1px solid white;
+  transition: all 0.5s ease-in-out;
+}
+
+.dark .glass-card-glass {
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.25) 100%);
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-card-content {
+  padding: 100px 60px 0px 30px;
+  transform: translate3d(0, 0, 26px);
+}
+
+.glass-card-content span.title {
+  display: block;
+  color: #000000 !important;
+  font-weight: 900;
+  font-size: 20px;
+}
+
+.dark .glass-card-content span.title {
+  color: #ffffff !important;
+}
+
+.glass-card-content span.text {
+  display: block;
+  color: #000000 !important;
+  font-size: 15px;
+  margin-top: 20px;
+}
+
+.dark .glass-card-content span.text {
+  color: #ffffff !important;
+}
+
+.glass-card-bottom {
+  padding: 10px 12px;
+  transform-style: preserve-3d;
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transform: translate3d(0, 0, 26px);
+}
+
+.glass-card-social-container {
+  display: flex;
+  gap: 10px;
+  transform-style: preserve-3d;
+}
+
+.glass-card-social-btn {
+  width: 30px;
+  aspect-ratio: 1;
+  padding: 5px;
+  background: #ffffff;
+  border-radius: 50%;
+  border: none;
+  display: grid;
+  place-content: center;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 7px 5px -5px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.glass-card-social-btn:hover {
+  background: #333333;
+  transform: translate3d(0, 0, 50px);
+  box-shadow: rgba(0, 0, 0, 0.15) -5px 20px 10px 0px;
+}
+
+.glass-card-social-btn:hover svg {
+  fill: white;
+}
+
+.glass-card-parent:hover .glass-card {
+  transform: rotate3d(1, 1, 0, 30deg);
+  box-shadow: rgba(0, 0, 0, 0.25) 30px 50px 25px -40px, rgba(0, 0, 0, 0.15) 0px 25px 30px 0px;
+}
+
+/* ─── LOADING SPINNER ──────────────────────────────── */
+.loadingspinner {
+  --square: 26px;
+  --offset: 30px;
+  --duration: 2.4s;
+  --delay: 0.2s;
+  --timing-function: ease-in-out;
+  --in-duration: 0.4s;
+  --in-delay: 0.1s;
+  --in-timing-function: ease-out;
+  width: calc(3 * var(--offset) + var(--square));
+  height: calc(2 * var(--offset) + var(--square));
+  margin: 0 auto;
+  position: relative;
+}
+
+.loadingspinner div {
+  display: inline-block;
+  background: var(--primary);
+  border: none;
+  border-radius: 2px;
+  width: var(--square);
+  height: var(--square);
+  position: absolute;
+}
+
+.loadingspinner #square1 {
+  left: calc(0 * var(--offset));
+  top: calc(0 * var(--offset));
+  animation:
+    square1 var(--duration) var(--delay) var(--timing-function) infinite,
+    squarefadein var(--in-duration) calc(1 * var(--in-delay)) var(--in-timing-function) both;
+}
+
+.loadingspinner #square2 {
+  left: calc(0 * var(--offset));
+  top: calc(1 * var(--offset));
+  animation:
+    square2 var(--duration) var(--delay) var(--timing-function) infinite,
+    squarefadein var(--in-duration) calc(1 * var(--in-delay)) var(--in-timing-function) both;
+}
+
+.loadingspinner #square3 {
+  left: calc(1 * var(--offset));
+  top: calc(1 * var(--offset));
+  animation:
+    square3 var(--duration) var(--delay) var(--timing-function) infinite,
+    squarefadein var(--in-duration) calc(2 * var(--in-delay)) var(--in-timing-function) both;
+}
+
+.loadingspinner #square4 {
+  left: calc(2 * var(--offset));
+  top: calc(1 * var(--offset));
+  animation:
+    square4 var(--duration) var(--delay) var(--timing-function) infinite,
+    squarefadein var(--in-duration) calc(3 * var(--in-delay)) var(--in-timing-function) both;
+}
+
+.loadingspinner #square5 {
+  left: calc(3 * var(--offset));
+  top: calc(1 * var(--offset));
+  animation:
+    square5 var(--duration) var(--delay) var(--timing-function) infinite,
+    squarefadein var(--in-duration) calc(4 * var(--in-delay)) var(--in-timing-function) both;
+}
+
+@keyframes square1 {
+  0%   { left: calc(0 * var(--offset)); top: calc(0 * var(--offset)); }
+  8.333% { left: calc(0 * var(--offset)); top: calc(1 * var(--offset)); }
+  100% { left: calc(0 * var(--offset)); top: calc(1 * var(--offset)); }
+}
+
+@keyframes square2 {
+  0%    { left: calc(0 * var(--offset)); top: calc(1 * var(--offset)); }
+  8.333%  { left: calc(0 * var(--offset)); top: calc(2 * var(--offset)); }
+  16.67%  { left: calc(1 * var(--offset)); top: calc(2 * var(--offset)); }
+  25.00%  { left: calc(1 * var(--offset)); top: calc(1 * var(--offset)); }
+  83.33%  { left: calc(1 * var(--offset)); top: calc(1 * var(--offset)); }
+  91.67%  { left: calc(1 * var(--offset)); top: calc(0 * var(--offset)); }
+  100%  { left: calc(0 * var(--offset)); top: calc(0 * var(--offset)); }
+}
+
+@keyframes square3 {
+  0%, 100% { left: calc(1 * var(--offset)); top: calc(1 * var(--offset)); }
+  16.67%   { left: calc(1 * var(--offset)); top: calc(1 * var(--offset)); }
+  25.00%   { left: calc(1 * var(--offset)); top: calc(0 * var(--offset)); }
+  33.33%   { left: calc(2 * var(--offset)); top: calc(0 * var(--offset)); }
+  41.67%   { left: calc(2 * var(--offset)); top: calc(1 * var(--offset)); }
+  66.67%   { left: calc(2 * var(--offset)); top: calc(1 * var(--offset)); }
+  75.00%   { left: calc(2 * var(--offset)); top: calc(2 * var(--offset)); }
+  83.33%   { left: calc(1 * var(--offset)); top: calc(2 * var(--offset)); }
+  91.67%   { left: calc(1 * var(--offset)); top: calc(1 * var(--offset)); }
+}
+
+@keyframes square4 {
+  0%    { left: calc(2 * var(--offset)); top: calc(1 * var(--offset)); }
+  33.33%  { left: calc(2 * var(--offset)); top: calc(1 * var(--offset)); }
+  41.67%  { left: calc(2 * var(--offset)); top: calc(2 * var(--offset)); }
+  50.00%  { left: calc(3 * var(--offset)); top: calc(2 * var(--offset)); }
+  58.33%  { left: calc(3 * var(--offset)); top: calc(1 * var(--offset)); }
+  100%  { left: calc(3 * var(--offset)); top: calc(1 * var(--offset)); }
+}
+
+@keyframes square5 {
+  0%    { left: calc(3 * var(--offset)); top: calc(1 * var(--offset)); }
+  50.00%  { left: calc(3 * var(--offset)); top: calc(1 * var(--offset)); }
+  58.33%  { left: calc(3 * var(--offset)); top: calc(0 * var(--offset)); }
+  66.67%  { left: calc(2 * var(--offset)); top: calc(0 * var(--offset)); }
+  75.00%  { left: calc(2 * var(--offset)); top: calc(1 * var(--offset)); }
+  100%  { left: calc(2 * var(--offset)); top: calc(1 * var(--offset)); }
+}
+
+@keyframes squarefadein {
+  0%   { transform: scale(0.75); opacity: 0; }
+  100% { transform: scale(1);    opacity: 1; }
+}
