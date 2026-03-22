@@ -15,6 +15,7 @@ const NAV_LINKS = [
   { label: 'Radio',      href: '/radio' },
   { label: 'Producción', href: '/produccion' },
   { label: 'VFX',        href: '/motion' },
+  { label: 'Artistas',   href: '/contactanos' },
   { label: 'Atrezo/PLV', href: '/atrezo' },
   { label: 'Contáctanos',  href: '/contactanos' },
 ]
