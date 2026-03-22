@@ -55,7 +55,7 @@ export default function ProduccionPage() {
         {/* Header */}
         <div className="mb-20 overflow-hidden">
           <FadeUp>
-            <p className="text-xs tracking-[0.3em] uppercase text-primary font-medium mb-4">
+            <p className="text-xs tracking-[0.4em] uppercase text-primary font-mono mb-4">
               Producción Musical
             </p>
           </FadeUp>

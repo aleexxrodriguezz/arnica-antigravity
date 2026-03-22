@@ -11,15 +11,7 @@ import { Sun, Moon, Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const NAV_LINKS = [
-  {
-    label: 'Agencia',
-    href: '#',
-    dropdown: [
-      { label: 'DJ', href: '/agencia/dj' },
-      { label: 'Publicidad', href: '/agencia/publicidad' },
-      { label: 'Música', href: '/agencia/musica' },
-    ]
-  },
+  { label: 'Agencia',    href: '/agencia' },
   { label: 'Radio',      href: '/radio' },
   { label: 'Producción', href: '/produccion' },
   { label: 'VFX',        href: '/motion' },
@@ -117,35 +109,12 @@ export function Navbar() {
 
         <div className="hidden md:flex items-center gap-8">
           {NAV_LINKS.map(link => (
-            link.dropdown ? (
-              <div key={link.label} className="relative group/dropdown">
-                <GlitchLink
-                  label={link.label}
-                  href={link.href}
-                  active={pathname.startsWith('/agencia')}
-                />
-                <div className="absolute top-full left-0 pt-4 hidden group-hover/dropdown:block">
-                  <div className="bg-background border border-border shadow-2xl p-4 min-w-[200px] flex flex-col gap-3 backdrop-blur-md bg-opacity-90">
-                    {link.dropdown.map(item => (
-                      <Link
-                        key={item.label}
-                        href={item.href}
-                        className="text-xs font-mono tracking-widest uppercase text-muted-foreground hover:text-primary transition-colors py-1"
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <GlitchLink
-                key={link.href}
-                label={link.label}
-                href={link.href}
-                active={pathname === link.href}
-              />
-            )
+            <GlitchLink
+              key={link.href}
+              label={link.label}
+              href={link.href}
+              active={pathname === link.href || (link.href === '/agencia' && pathname.startsWith('/agencia'))}
+            />
           ))}
         </div>
 
@@ -185,32 +154,17 @@ export function Navbar() {
       {menuOpen && (
         <div className="md:hidden border-t border-border bg-background px-6 py-6 flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200">
           {NAV_LINKS.map(link => (
-            <div key={link.label} className="flex flex-col gap-4">
-              <Link
-                href={link.href}
-                onClick={() => !link.dropdown && setMenuOpen(false)}
-                className={cn(
-                  'text-base font-medium tracking-widest uppercase transition-colors',
-                  pathname === link.href ? 'text-primary' : 'text-foreground hover:text-primary'
-                )}
-              >
-                {link.label}
-              </Link>
-              {link.dropdown && (
-                <div className="pl-4 flex flex-col gap-3 border-l border-border">
-                  {link.dropdown.map(item => (
-                    <Link
-                      key={item.label}
-                      href={item.href}
-                      onClick={() => setMenuOpen(false)}
-                      className="text-sm font-medium tracking-widest uppercase text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setMenuOpen(false)}
+              className={cn(
+                'text-base font-medium tracking-widest uppercase transition-colors',
+                pathname === link.href ? 'text-primary' : 'text-foreground hover:text-primary'
               )}
-            </div>
+            >
+              {link.label}
+            </Link>
           ))}
         </div>
       )}

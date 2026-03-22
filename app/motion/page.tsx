@@ -62,7 +62,7 @@ export default function MotionPage() {
         {/* Header */}
         <div className="mb-20 overflow-hidden">
           <FadeUp>
-            <p className="text-xs tracking-[0.3em] uppercase text-primary font-medium mb-4">Tutoriales</p>
+            <p className="text-xs tracking-[0.4em] uppercase text-primary font-mono mb-4">Tutoriales</p>
           </FadeUp>
           <ParallaxLayer speed={0.08}>
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground text-balance font-sans" style={{ fontSize: 'clamp(1.75rem, 3.5vw, 3.75rem)' }}>
