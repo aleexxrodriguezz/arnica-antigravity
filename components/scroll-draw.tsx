@@ -141,17 +141,18 @@ export function ScrollDrawSection() {
     offset: ['start start', 'end end'],
   })
 
-  const [progress, setProgress] = useState(0)
+  // Mapeamos el progreso para que empiece al 7% del scroll de la sección y termine al 90%
+  const progress = useTransform(scrollYProgress, [0.07, 0.90], [0, 1], { clamp: true })
+  const [currentProgress, setCurrentProgress] = useState(0)
   
-  useMotionValueEvent(scrollYProgress, 'change', v => {
-    const newProgress = Math.max(0, v)
-    setProgress(newProgress)
+  useMotionValueEvent(progress, 'change', v => {
+    setCurrentProgress(v)
     
     // Skip sound logic on mobile
     if (isMobile) return
 
-    // Sound logic (original range 10% to 100%)
-    const inZone = newProgress >= 0.10 && newProgress < 1.0
+    // Sound logic
+    const inZone = v > 0 && v < 1.0
     
     if (inZone) {
       if (!inSoundZoneRef.current) {
@@ -166,51 +167,39 @@ export function ScrollDrawSection() {
     }
   })
 
-  // Transiciones de opacidad
-  // El diagrama se desvanece al final del scroll (90% - 95%)
-  const diagramOpacity = useTransform(scrollYProgress, [0.90, 0.95], [1, 0])
-  
-  // El VFX Hero aparece justo después (95% - 100%)
-  const vfxOpacity = useTransform(scrollYProgress, [0.95, 1.0], [0, 1])
-  
-  // Parallax para el SVG
-  const svgY = useTransform(scrollYProgress, [0, 1], ['10%', '-10%'])
+  // El diagrama se desvanece al final de su tramo (95% - 100%)
+  const diagramOpacity = useTransform(scrollYProgress, [0.95, 1.0], [1, 0], { clamp: true })
+  const svgY = useTransform(scrollYProgress, [0, 1], ['5%', '-5%'])
 
   return (
     <section
       ref={wrapperRef}
       className="relative w-full"
-      aria-label="Scroll-driven diagram and VFX studio"
+      aria-label="Scroll-driven technical diagram"
     >
-      <div style={{ height: '500vh' }}>
-        <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#05050a]">
+      <div style={{ height: '400vh' }}>
+        <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#05050a] flex items-center justify-center">
 
-          {/* ── 1. Diagrama Minimalista ── */}
+          {/* 1. Diagrama Minimalista */}
           <motion.div 
-            className="absolute inset-0 z-10 flex items-center justify-center p-4"
+            className="relative w-full max-w-4xl mx-auto p-4"
             style={{ 
               opacity: diagramOpacity,
-              pointerEvents: progress < 0.95 ? 'auto' : 'none'
+              y: svgY
             }}
           >
             {/* Ambient glow */}
             <div
               className="absolute inset-0 pointer-events-none"
               style={{
-                background: isDark 
-                  ? 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(254,249,243,0.08) 0%, transparent 70%)'
-                  : 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,0,0,0.05) 0%, transparent 70%)',
+                background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(254,249,243,0.08) 0%, transparent 70%)',
               }}
             />
 
-            <motion.div
-              className="relative w-full max-w-4xl mx-auto"
-              style={{ y: svgY }}
-            >
+            <motion.div className="relative">
               <motion.div
                 className="absolute -top-20 left-0 right-0 flex justify-center items-center gap-6"
-                animate={{ opacity: progress > 0.02 ? 1 : 0 }}
-                transition={{ duration: 0.6 }}
+                style={{ opacity: currentProgress > 0.02 ? 1 : 0 }}
               >
                 <span className="w-8 h-px bg-foreground/40" />
                 <span className="text-xs font-bold tracking-[0.2em] uppercase text-foreground/80">Sistema Creativo Arnica</span>
@@ -224,7 +213,7 @@ export function ScrollDrawSection() {
               >
                 <defs>
                   <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
-                    <path d="M50 0L0 0 0 50" fill="none" stroke={isDark ? "rgba(254,249,243,0.03)" : "rgba(0,0,0,0.03)"} strokeWidth="1" />
+                    <path d="M50 0L0 0 0 50" fill="none" stroke="rgba(254,249,243,0.03)" strokeWidth="1" />
                   </pattern>
                 </defs>
                 <rect width="1000" height="700" fill="url(#grid)" />
@@ -235,7 +224,7 @@ export function ScrollDrawSection() {
                     d={p.d}
                     color={p.color}
                     width={p.width}
-                    progress={progress}
+                    progress={currentProgress}
                     startAt={p.startAt}
                     endAt={p.endAt}
                   />
@@ -251,7 +240,7 @@ export function ScrollDrawSection() {
                     fontFamily="monospace"
                     letterSpacing="2"
                     textAnchor="middle"
-                    opacity={progress >= p.endAt ? 0.8 : 0}
+                    opacity={currentProgress >= p.endAt ? 0.8 : 0}
                     style={{ transition: 'opacity 0.4s ease' }}
                   >
                     {p.label}
@@ -265,28 +254,12 @@ export function ScrollDrawSection() {
                     cy={n.cy}
                     r={n.r}
                     fill={n.color}
-                    opacity={progress >= n.triggerAt ? 1 : 0}
+                    opacity={currentProgress >= n.triggerAt ? 1 : 0}
                     style={{ transition: 'opacity 0.3s ease' }}
                   />
                 ))}
               </svg>
             </motion.div>
-          </motion.div>
-
-          {/* ── 2. ESTUDIO DE MÚSICA / VFX HERO ── */}
-          <motion.div
-            className="absolute inset-0 z-20 w-full h-full"
-            style={{ 
-              opacity: vfxOpacity,
-              pointerEvents: progress > 0.97 ? 'auto' : 'none'
-            }}
-          >
-            <iframe
-              src="/vfx-hero.html"
-              className="w-full h-full border-none"
-              title="Estudio de Música VFX"
-              loading="lazy"
-            />
           </motion.div>
 
           {/* Progress Indicator */}
@@ -297,11 +270,11 @@ export function ScrollDrawSection() {
             <div className="w-48 h-[2px] bg-white/10 rounded-full overflow-hidden">
               <motion.div
                 className="h-full bg-primary"
-                style={{ scaleX: progress, transformOrigin: 'left' }}
+                style={{ scaleX: currentProgress, transformOrigin: 'left' }}
               />
             </div>
             <span className="text-[10px] font-bold tracking-widest uppercase opacity-60">
-              SISTEMA CARGANDO: {Math.round(progress * 100)}%
+              SISTEMA CARGANDO: {Math.round(currentProgress * 100)}%
             </span>
           </motion.div>
         </div>
