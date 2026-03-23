@@ -39,6 +39,8 @@ export const viewport = {
   userScalable: false,
 }
 
+import { ArnicaAI } from '@/components/arnica-ai'
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -50,6 +52,7 @@ export default function RootLayout({
         <ThemeProvider>
           <LenisProvider>
             {children}
+            <ArnicaAI />
           </LenisProvider>
         </ThemeProvider>
         <Analytics />
