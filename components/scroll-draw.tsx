@@ -203,23 +203,18 @@ export function ScrollDrawSection() {
   
   // Control sound based on scroll progress (10% to 100%) when enabled and on desktop
   useMotionValueEvent(scrollYProgress, 'change', v => {
-    const newProgress = Math.max(0.08, v)
+    const newProgress = Math.max(0, v)
     setProgress(newProgress)
     
     // Skip sound logic on mobile
-    if (isMobile || !soundEnabled) return
-    
-    const inZone = newProgress >= 0.10 && newProgress < 0.99
+    if (isMobile) return
+
+    const inZone = newProgress >= 0.10 && newProgress < 1.0 && soundEnabled
     
     if (inZone) {
-      // Volume increases with progress: 0.06 at 10% → 0.14 at 99%
-      const vol = 0.06 + (newProgress - 0.10) * 0.09
-      
       if (!inSoundZoneRef.current) {
         inSoundZoneRef.current = true
-        playSound(Math.min(vol, 0.14))
-      } else {
-        playSound(Math.min(vol, 0.14))
+        playSound(0.12)
       }
     } else {
       if (inSoundZoneRef.current) {
@@ -228,6 +223,14 @@ export function ScrollDrawSection() {
       }
     }
   })
+
+  // Handle immediate sound stop when disabled via button
+  useEffect(() => {
+    if (!soundEnabled && inSoundZoneRef.current) {
+      inSoundZoneRef.current = false
+      stopSound()
+    }
+  }, [soundEnabled, stopSound])
 
   // Parallax for the entire SVG panel
   const svgY = useTransform(scrollYProgress, [0, 1], ['10%', '-10%'])
