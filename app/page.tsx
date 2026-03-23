@@ -132,26 +132,6 @@ function ServicesSection() {
   )
 }
 
-function ShowcaseSection() {
-  const cards = [
-    { title: 'VISION', description: 'Transformamos ideas en realidad visual' },
-    { title: 'TECH', description: 'Tecnología de vanguardia aplicada' },
-    { title: 'RESULTS', description: 'Impacto medible y escalable' },
-  ]
-  return (
-    <section className="py-40 border-t border-border">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="mb-24 text-center">
-          <FadeUp><p className="text-xs tracking-[0.4em] uppercase text-primary font-mono mb-6">Nuestras fortalezas</p></FadeUp>
-            <FadeUp delay={0.1}><h2 className="text-foreground leading-tight text-balance uppercase font-sans" style={{ fontSize: 'clamp(1.75rem, 3.5vw, 3.75rem)', fontWeight: 700 }}>LO QUE NOS DEFINE</h2></FadeUp>
-        </div>
-        <div className="flex justify-center items-center flex-wrap gap-12">
-          {cards.map((card, i) => (<GlassCard key={card.title} title={card.title} description={card.description} delay={i * 0.15} />))}
-        </div>
-      </div>
-    </section>
-  )
-}
 
 function StatsSection() {
   const ref = useRef<HTMLElement>(null)
@@ -272,7 +252,6 @@ export default function HomePage() {
   <ScrollDrawSection />
       <ManifestoSection />
       <ServicesSection />
-      <ShowcaseSection />
       <StatsSection />
       <TechStatement />
       <ProcessSection />
