@@ -190,7 +190,6 @@ export function ScrollDrawSection() {
   const colors = getColors(isDark)
   const PATHS = getPaths(colors)
   const NODES = getNodes(colors)
-  const { soundEnabled, toggleSound } = useSoundEnabled()
   const { play: playSound, stop: stopSound } = useParallaxTechSound()
   const inSoundZoneRef = useRef(false)
   
@@ -209,7 +208,7 @@ export function ScrollDrawSection() {
     // Skip sound logic on mobile
     if (isMobile) return
 
-    const inZone = newProgress >= 0.10 && newProgress < 1.0 && soundEnabled
+    const inZone = newProgress >= 0.10 && newProgress < 1.0
     
     if (inZone) {
       if (!inSoundZoneRef.current) {
@@ -224,13 +223,15 @@ export function ScrollDrawSection() {
     }
   })
 
-  // Handle immediate sound stop when disabled via button
+  // Handle immediate sound stop when disabled (commented out as sound is now automatic)
+  /*
   useEffect(() => {
     if (!soundEnabled && inSoundZoneRef.current) {
       inSoundZoneRef.current = false
       stopSound()
     }
   }, [soundEnabled, stopSound])
+  */
 
   // Parallax for the entire SVG panel
   const svgY = useTransform(scrollYProgress, [0, 1], ['10%', '-10%'])
@@ -283,26 +284,6 @@ export function ScrollDrawSection() {
             >
               <span className="w-8 h-px bg-foreground/40" />
               
-              {/* Sound toggle button - desktop only */}
-              <button
-                onClick={toggleSound}
-                aria-label={soundEnabled ? 'Desactivar sonido' : 'Activar sonido'}
-                className="hidden md:flex items-center gap-2 px-3 py-1 rounded-sm border border-foreground/20 text-xs tracking-widest uppercase font-sans transition-all hover:border-foreground/40"
-                title={soundEnabled ? 'Sonido activado' : 'Activar sonido'}
-              >
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  {soundEnabled ? (
-                    <>
-                      <circle cx="6" cy="6" r="1.5" fill="currentColor" />
-                      <circle cx="6" cy="6" r="3.5" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.6" />
-                      <circle cx="6" cy="6" r="5.5" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.3" />
-                    </>
-                  ) : (
-                    <path d="M2 4 L10 10 M10 4 L2 10" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-                  )}
-                </svg>
-                {soundEnabled ? 'Audio' : 'Sonido'}
-              </button>
               
               <span className="text-sm font-medium tracking-widest uppercase font-sans text-foreground">Sistema Creativo Arnica</span>
               <span className="w-8 h-px bg-foreground/40" />
