@@ -1,103 +1,125 @@
 'use client'
 
-import { useRef } from 'react'
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
+import { useRef, useState } from 'react'
+import { motion, useScroll, useTransform, useSpring, AnimatePresence, useMotionValue } from 'framer-motion'
+import { Play, X } from 'lucide-react'
+
+// YouTube IDs provided by user
+const VIDEOS = [
+  'XLHppmtv0YE', 
+  'uWHajfb0_Ks', 
+  '7fI9Ube03c8', 
+  '6lHMiCqFGx8', 
+]
+
+function SubCube({ 
+  position, 
+  videoIndex,
+  scrollYProgress,
+  onOpenVideo
+}: { 
+  position: [number, number, number], 
+  videoIndex: number,
+  scrollYProgress: any,
+  onOpenVideo: (id: string) => void
+}) {
+  const [x, y, z] = position
+  const videoId = VIDEOS[videoIndex % VIDEOS.length]
+  const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+
+  // Move the sub-cube based on scroll (Explosion effect)
+  // We explode between 0.4 and 0.6 of the scroll progress
+  const explode = useTransform(scrollYProgress, [0.35, 0.5, 0.65], [1, 1.8, 1])
+  
+  const posX = useTransform(explode, (v) => x * v)
+  const posY = useTransform(explode, (v) => y * v)
+  const posZ = useTransform(explode, (v) => z * v)
+
+  const faces = [
+    { dir: 'front',  transform: 'translateZ(50px)',  vid: videoId },
+    { dir: 'back',   transform: 'rotateY(180deg) translateZ(50px)', vid: videoId },
+    { dir: 'right',  transform: 'rotateY(90deg) translateZ(50px)',  vid: videoId },
+    { dir: 'left',   transform: 'rotateY(-90deg) translateZ(50px)', vid: videoId },
+    { dir: 'top',    transform: 'rotateX(90deg) translateZ(50px)',  vid: videoId },
+    { dir: 'bottom', transform: 'rotateX(-90deg) translateZ(50px)', vid: videoId },
+  ]
+
+  return (
+    <motion.div
+      className="absolute w-[100px] h-[100px]"
+      style={{
+        x: posX,
+        y: posY,
+        z: posZ,
+        transformStyle: 'preserve-3d',
+      }}
+    >
+      {faces.map((f) => (
+        <div
+          key={f.dir}
+          className="absolute inset-0 bg-black border border-white/10 overflow-hidden flex items-center justify-center group cursor-pointer"
+          style={{ transform: f.transform, backfaceVisibility: 'hidden' }}
+          onClick={() => onOpenVideo(f.vid)}
+        >
+          <img 
+            src={thumbnailUrl} 
+            alt="VFX Case Study" 
+            className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-300 grayscale group-hover:grayscale-0 scale-110 group-hover:scale-100 transition-transform"
+          />
+          {/* VSL Overlay */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
+             <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-2xl scale-75 group-hover:scale-100 transition-transform">
+                <Play className="w-5 h-5 text-primary-foreground fill-current ml-0.5" />
+             </div>
+             <span className="mt-2 text-[8px] uppercase tracking-[0.2em] font-bold text-white drop-shadow-md">Ver Caso</span>
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-tr from-black/80 to-transparent pointer-events-none" />
+        </div>
+      ))}
+    </motion.div>
+  )
+}
 
 export function CinematicRubikCube() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const [activeVideo, setActiveVideo] = useState<string | null>(null)
+  
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ['start start', 'end end'] // Track the full 400vh height
+    offset: ['start start', 'end end']
   })
 
-  // Smooth progress for the loader
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  })
+  const progressSpring = useSpring(scrollYProgress, { stiffness: 100, damping: 30 })
 
-  // Cinematic Timeframes:
-  // 0.0 - 0.2: Zoom in from afar
-  // 0.2 - 0.5: Rotate to show sides (cinematic movement)
-  // 0.5 - 0.8: Rotate complex / spin
-  // 0.8 - 1.0: Fly through / Exit
+  // Overall Cube Transform
+  const scale = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.3, 1, 1.2, 8])
+  const opacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0])
+  const rotateX = useTransform(scrollYProgress, [0, 0.2, 0.5, 0.8, 1], [45, 0, 180, 45, 0])
+  const rotateY = useTransform(scrollYProgress, [0, 0.2, 0.5, 0.8, 1], [-45, 0, 360, 180, 90])
+  const z = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [-500, 0, 0, 1000])
 
-  const scale = useTransform(
-    scrollYProgress,
-    [0, 0.2, 0.8, 1],
-    [0.15, 1, 1, 8]
-  )
-
-  const opacity = useTransform(
-    scrollYProgress,
-    [0, 0.1, 0.9, 1],
-    [0, 1, 1, 0]
-  )
-
-  const rotateX = useTransform(
-    scrollYProgress,
-    [0, 0.2, 0.4, 0.6, 0.8, 1],
-    [45, 0, 15, -15, 90, -45]
-  )
-
-  const rotateY = useTransform(
-    scrollYProgress,
-    [0, 0.2, 0.4, 0.6, 0.8, 1],
-    [-45, 0, -90, 90, 180, 180]
-  )
-
-  const z = useTransform(
-    scrollYProgress,
-    [0, 0.2, 0.8, 1],
-    [-1000, 0, 0, 2000]
-  )
-
-  const faces = [
-    { name: 'front', transform: 'translateZ(200px)' },
-    { name: 'back', transform: 'rotateY(180deg) translateZ(200px)' },
-    { name: 'right', transform: 'rotateY(90deg) translateZ(200px)' },
-    { name: 'left', transform: 'rotateY(-90deg) translateZ(200px)' },
-    { name: 'top', transform: 'rotateX(90deg) translateZ(200px)' },
-    { name: 'bottom', transform: 'rotateX(-90deg) translateZ(200px)' },
-  ]
-
-  const VIDEOS = [
-    'XLHppmtv0YE', 
-    'uWHajfb0_Ks', 
-    '7fI9Ube03c8', 
-    '6lHMiCqFGx8', 
+  const subCubePositions: [number, number, number][] = [
+    [-50, -50, -50], [50, -50, -50], [-50, 50, -50], [50, 50, -50],
+    [-50, -50, 50],  [50, -50, 50],  [-50, 50, 50],  [50, 50, 50]
   ]
 
   return (
     <section ref={containerRef} className="relative h-[400vh] bg-background w-full">
-      
-      {/* Sticky container */}
-      <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden" style={{ perspective: 1500 }}>
+      <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden" style={{ perspective: 2000 }}>
         
-        {/* Progress Loader (Loading Element) */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[450px] h-[450px] border border-primary/10 rounded-full pointer-events-none -z-10">
-           <motion.div 
-             className="absolute inset-0 border-2 border-primary/40 rounded-full"
-             style={{ 
-               scale: useTransform(scrollYProgress, [0, 1], [0.8, 1.2]),
-               opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]),
-               borderStyle: 'dashed'
-             }}
-           />
+        {/* Loading Bar Top */}
+        <div className="absolute top-0 left-0 right-0 h-0.5 bg-secondary/20 z-50">
+           <motion.div className="h-full bg-primary shadow-[0_0_10px_var(--primary)]" style={{ scaleX: progressSpring, transformOrigin: '0%' }} />
         </div>
 
-        {/* Global Loading Bar */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-secondary/20 z-50">
-           <motion.div 
-             className="h-full bg-primary"
-             style={{ scaleX, transformOrigin: '0%' }}
-           />
+        {/* Backdrop Text */}
+        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex items-center justify-center opacity-[0.03] select-none pointer-events-none">
+           <h2 className="text-[30vw] font-bold tracking-tighter uppercase font-sans">VFX</h2>
         </div>
 
-        {/* The Cube */}
+        {/* 2x2x2 Rubik's Cube */}
         <motion.div
-          className="relative w-[400px] h-[400px]"
+          className="relative w-0 h-0 flex items-center justify-center"
           style={{
             scale,
             opacity,
@@ -107,52 +129,77 @@ export function CinematicRubikCube() {
             transformStyle: 'preserve-3d',
           }}
         >
-          {faces.map((face) => (
-            <div
-              key={face.name}
-              className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-2 bg-transparent"
-              style={{
-                transform: face.transform,
-              }}
-            >
-              {VIDEOS.map((videoId, idx) => (
-                <div
-                  key={`${face.name}-${idx}`}
-                  className="w-full h-full rounded-sm border border-border/20 bg-black/80 flex items-center justify-center overflow-hidden group shadow-2xl relative"
-                >
-                  <iframe
-                    src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1`}
-                    className="absolute inset-0 w-[400%] h-[400%] -top-[150%] -left-[150%] pointer-events-none opacity-40 group-hover:opacity-80 transition-opacity duration-700"
-                    allow="autoplay; encrypted-media"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-tr from-background/60 to-transparent pointer-events-none" />
-                </div>
-              ))}
-            </div>
+          {subCubePositions.map((pos, i) => (
+            <SubCube 
+              key={i} 
+              position={pos} 
+              videoIndex={i} 
+              scrollYProgress={scrollYProgress}
+              onOpenVideo={(id) => setActiveVideo(id)} 
+            />
           ))}
         </motion.div>
 
-        {/* Guidance / Status Text */}
-        <div className="absolute bottom-20 flex flex-col items-center gap-4">
-          <motion.p 
-            className="text-[10px] uppercase tracking-[0.5em] font-mono text-primary"
-            style={{ opacity: useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]) }}
-          >
-            Sincronizando Archivos VFX
-          </motion.p>
-          <div className="flex gap-2">
-            {[0, 1, 2, 3].map(i => (
-               <motion.div 
-                key={i}
-                className="w-1 h-1 bg-primary rounded-full"
-                animate={{ opacity: [0.2, 1, 0.2] }}
-                transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
-               />
-            ))}
-          </div>
+        {/* Interactive Text */}
+        <div className="absolute bottom-24 flex flex-col items-center text-center">
+           <motion.div 
+            className="flex flex-col items-center gap-2"
+            style={{ opacity: useTransform(scrollYProgress, [0, 0.1, 0.8, 1], [0, 1, 1, 0]) }}
+           >
+             <p className="text-[10px] uppercase font-bold tracking-[0.5em] text-primary">Portfolio Interactivo 3D</p>
+             <span className="text-[10px] uppercase font-mono text-muted-foreground opacity-60">Haz clic en las caras para explorar</span>
+           </motion.div>
         </div>
       </div>
+
+      {/* Video Modal (VSL Style) */}
+      <AnimatePresence>
+        {activeVideo && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 md:p-8 backdrop-blur-2xl"
+            onClick={() => setActiveVideo(null)}
+          >
+            <motion.div 
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="w-full max-w-6xl relative bg-neutral-900 rounded-xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10"
+              onClick={e => e.stopPropagation()}
+            >
+              <button 
+                onClick={() => setActiveVideo(null)}
+                className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center text-white/70 hover:text-white hover:bg-black/80 transition-all border border-white/10"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              
+              <div className="aspect-video w-full bg-black">
+                <iframe
+                  src={`https://www.youtube.com/embed/${activeVideo}?autoplay=1&rel=0&modestbranding=1`}
+                  className="w-full h-full"
+                  allow="autoplay; encrypted-media; fullscreen"
+                />
+              </div>
+              
+              <div className="p-6 border-t border-white/5 bg-neutral-900 flex justify-between items-center">
+                 <div>
+                    <h3 className="text-white text-sm font-bold tracking-widest uppercase">Visual Showreel</h3>
+                    <p className="text-white/40 text-[10px] uppercase tracking-wider mt-1 font-mono">Arnica Agency · Cinematic Experience</p>
+                 </div>
+                 <button 
+                  onClick={() => setActiveVideo(null)}
+                  className="px-6 py-2 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-transform"
+                 >
+                   Cerrar
+                 </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   )
 }
