@@ -33,116 +33,55 @@ export function useParallaxTechSound() {
       masterRef.current = master
 
       const now = ctx.currentTime
-      const baseTime = now
+      
+      // ═══════════════════════════════════════════════════════════
+      // 8-BIT LOADING SOUND ENGINE
+      // ═══════════════════════════════════════════════════════════
+      
+      // OSC 1: Rapid Arpeggio (Pulse Wave style)
+      const pulse = ctx.createOscillator()
+      const pulseGain = ctx.createGain()
+      pulse.type = 'square'
+      pulse.frequency.setValueAtTime(440, now)
+      
+      // Create a sequence of frequencies for that "loading" feel
+      const freqs = [440, 880, 554, 659, 330, 987, 1318]
+      for (let i = 0; i < 20; i++) {
+        pulse.frequency.setValueAtTime(freqs[i % freqs.length], now + i * 0.1)
+      }
+      
+      pulseGain.gain.setValueAtTime(0.05, now)
+      pulse.connect(pulseGain)
+      pulseGain.connect(master)
+      pulse.start()
+      oscsRef.current.push(pulse)
 
-      // ═══════════════════════════════════════════════════════════
-      // CAPA 1: REACTOR PROFUNDO (tipo Iron Man suit activation)
-      // ═══════════════════════════════════════════════════════════
-      const reactor = ctx.createOscillator()
-      const reactorGain = ctx.createGain()
-      reactor.type = 'sine'
-      reactor.frequency.setValueAtTime(30, baseTime)
-      reactor.frequency.exponentialRampToValueAtTime(80, baseTime + 2) // Barrido ascendente lento
-      reactor.frequency.exponentialRampToValueAtTime(30, baseTime + 4)
-      reactorGain.gain.setValueAtTime(0.15, baseTime)
-      reactor.connect(reactorGain)
-      reactorGain.connect(master)
-      reactor.start()
-      oscsRef.current.push(reactor)
+      // OSC 2: High bit-chirp
+      const chirp = ctx.createOscillator()
+      const chirpGain = ctx.createGain()
+      chirp.type = 'square'
+      chirp.frequency.setValueAtTime(2000, now)
+      
+      for (let i = 0; i < 40; i++) {
+        chirp.frequency.setValueAtTime(Math.random() * 3000 + 1000, now + i * 0.05)
+      }
+      
+      chirpGain.gain.setValueAtTime(0.02, now)
+      chirp.connect(chirpGain)
+      chirpGain.connect(master)
+      chirp.start()
+      oscsRef.current.push(chirp)
 
-      // ═══════════════════════════════════════════════════════════
-      // CAPA 2: ZUMBIDO ELÉCTRICO (descarga de energía)
-      // ═══════════════════════════════════════════════════════════
-      const electric = ctx.createOscillator()
-      const electricGain = ctx.createGain()
-      electric.type = 'sawtooth'
-      electric.frequency.setValueAtTime(150, baseTime)
-      electric.frequency.exponentialRampToValueAtTime(300, baseTime + 1.5)
-      electric.frequency.exponentialRampToValueAtTime(150, baseTime + 3)
-      electricGain.gain.setValueAtTime(0.08, baseTime)
-      electric.connect(electricGain)
-      electricGain.connect(master)
-      electric.start()
-      oscsRef.current.push(electric)
-
-      // ═══════════════════════════════════════════════════════════
-      // CAPA 3: LASER ENERGÉTICO (barrido rápido ascendente)
-      // ═══════════════════════════════════════════════════════════
-      const laser1 = ctx.createOscillator()
-      const laser1Gain = ctx.createGain()
-      laser1.type = 'sine'
-      laser1.frequency.setValueAtTime(600, baseTime)
-      laser1.frequency.exponentialRampToValueAtTime(2000, baseTime + 0.5) // Barrido rápido
-      laser1.frequency.exponentialRampToValueAtTime(600, baseTime + 1)
-      laser1Gain.gain.setValueAtTime(0.07, baseTime)
-      laser1.connect(laser1Gain)
-      laser1Gain.connect(master)
-      laser1.start()
-      oscsRef.current.push(laser1)
-
-      // ═══════════════════════════════════════════════════════════
-      // CAPA 4: PULSOS DE PLASMA (oscilación rápida)
-      // ═══════════════════════════════════════════════════════════
-      const plasma = ctx.createOscillator()
-      const plasmaGain = ctx.createGain()
-      plasma.type = 'triangle'
-      plasma.frequency.setValueAtTime(800, baseTime)
-      plasma.frequency.exponentialRampToValueAtTime(1400, baseTime + 1.2)
-      plasmaGain.gain.setValueAtTime(0.05, baseTime)
-      plasma.connect(plasmaGain)
-      plasmaGain.connect(master)
-      plasma.start()
-      oscsRef.current.push(plasma)
-
-      // ═══════════════════════════════════════════════════════════
-      // CAPA 5: BRILLO CRISTALINO (alta frecuencia parpadeante)
-      // ═══════════════════════════════════════════════════════════
-      const shimmer = ctx.createOscillator()
-      const shimmerGain = ctx.createGain()
-      shimmer.type = 'sine'
-      shimmer.frequency.setValueAtTime(3200, baseTime)
-      shimmerGain.gain.setValueAtTime(0.02, baseTime)
-      shimmer.connect(shimmerGain)
-      shimmerGain.connect(master)
-      shimmer.start()
-      oscsRef.current.push(shimmer)
-
-      // ═══════════════════════════════════════════════════════════
-      // MODULADORES: LFOs Y EFECTOS DINÁMICOS
-      // ═══════════════════════════════════════════════════════════
-
-      // LFO 1: Modulación profunda en reactor (efecto "breathing")
-      const lfo1 = ctx.createOscillator()
-      const lfo1Gain = ctx.createGain()
-      lfo1.type = 'sine'
-      lfo1.frequency.setValueAtTime(0.8, baseTime)
-      lfo1Gain.gain.setValueAtTime(0.05, baseTime)
-      lfo1.connect(lfo1Gain)
-      lfo1Gain.connect(reactorGain.gain)
-      lfo1.start()
-      oscsRef.current.push(lfo1)
-
-      // LFO 2: Modulación rápida en shimmer (efecto "sparkling")
-      const lfo2 = ctx.createOscillator()
-      const lfo2Gain = ctx.createGain()
-      lfo2.type = 'sine'
-      lfo2.frequency.setValueAtTime(4.5, baseTime)
-      lfo2Gain.gain.setValueAtTime(0.01, baseTime)
-      lfo2.connect(lfo2Gain)
-      lfo2Gain.connect(shimmerGain.gain)
-      lfo2.start()
-      oscsRef.current.push(lfo2)
-
-      // LFO 3: Modulación de plasma (efecto "pulsing energy")
-      const lfo3 = ctx.createOscillator()
-      const lfo3Gain = ctx.createGain()
-      lfo3.type = 'sine'
-      lfo3.frequency.setValueAtTime(2.2, baseTime)
-      lfo3Gain.gain.setValueAtTime(0.08, baseTime)
-      lfo3.connect(lfo3Gain)
-      lfo3Gain.connect(laser1Gain.gain)
-      lfo3.start()
-      oscsRef.current.push(lfo3)
+      // LFO: Fast Volume gating for "stutter" effect
+      const lfo = ctx.createOscillator()
+      const lfoGain = ctx.createGain()
+      lfo.type = 'square'
+      lfo.frequency.setValueAtTime(12, now) // 12Hz stutter
+      lfoGain.gain.setValueAtTime(0.03, now)
+      lfo.connect(lfoGain)
+      lfoGain.connect(master.gain)
+      lfo.start()
+      oscsRef.current.push(lfo)
 
     } catch {
       // Audio not supported
