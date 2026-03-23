@@ -77,7 +77,7 @@ export default function ArtistasPage() {
                       alt="Fernando Ballesteros Logo"
                       width={600}
                       height={300}
-                      className="w-full h-auto filter brightness-100 contrast-125"
+                      className="w-full h-auto filter invert brightness-[2] contrast-125 mix-blend-screen"
                     />
                   </div>
                 </div>
