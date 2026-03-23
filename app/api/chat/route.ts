@@ -5,6 +5,13 @@ export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
 
+    if (!process.env.GROQ_API_KEY) {
+      console.error('MISSING GROQ_API_KEY in process.env');
+    }
+    if (!process.env.OPENROUTER_API_KEY) {
+      console.error('MISSING OPENROUTER_API_KEY in process.env');
+    }
+
     // 1. Try Groq first
     try {
       const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {

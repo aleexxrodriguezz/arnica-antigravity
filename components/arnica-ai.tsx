@@ -13,7 +13,7 @@ interface Message {
 export function ArnicaAI() {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: 'Hola, soy el agente IA de Arnica Antigravity. ¿En qué puedo asistirte hoy?' }
+    { role: 'assistant', content: 'Hola, soy Arnica. ¿En qué puedo asistirte hoy?' }
   ])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -86,7 +86,7 @@ export function ArnicaAI() {
                 <Sparkles className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h3 className="text-sm font-bold tracking-widest text-foreground uppercase">Arnica Agent</h3>
+                <h3 className="text-sm font-bold tracking-widest text-foreground uppercase">Arnica</h3>
                 <div className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   <span className="text-[10px] text-muted-foreground uppercase tracking-widest">Online / Llama 3.3</span>

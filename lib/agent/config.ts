@@ -1,7 +1,7 @@
 import { AGENT_KNOWLEDGE } from './knowledge';
 
 export const AGENT_CONFIG = {
-  name: "Arnica Antigravity AI",
+  name: "Arnica",
   model: "llama-3.3-70b-versatile",
   fallbackModel: "google/gemini-2.0-flash-lite-preview-02-05:free", // Use a reliable free model from openrouter
   temperature: 0.5, // Lower temperature for more direct responses

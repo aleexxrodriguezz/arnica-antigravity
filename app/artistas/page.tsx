@@ -73,7 +73,7 @@ export default function ArtistasPage() {
                   </div>
                   <div className="relative z-10 w-full max-w-[280px]">
                     <Image
-                      src="/artistas/fb-logo.jpg"
+                      src="/artistas/fb-logo-v2.png"
                       alt="Fernando Ballesteros Logo"
                       width={600}
                       height={300}
