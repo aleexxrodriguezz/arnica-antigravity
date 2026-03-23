@@ -13,7 +13,7 @@
 
 /* ─── LIGHT MODE (DIA) - DEFAULT - Textos negros, títulos rosa chicle ─── */
 :root {
-  --background: #ffffff;
+  --background: #fef9f3;
   --foreground: #000000;
   --card: #f5f5f5;
   --card-foreground: #000000;
@@ -28,7 +28,7 @@
   --accent: #FF5EB5;
   --accent-foreground: #000000;
   --destructive: #cc0000;
-  --destructive-foreground: #ffffff;
+  --destructive-foreground: #fef9f3;
   --border: #dddddd;
   --input: #eeeeee;
   --ring: #FF5EB5;
@@ -46,30 +46,30 @@
 /* ─── DARK MODE (NOCHE) - Textos blancos, sin rosa ─── */
 .dark {
   --background: #000000;
-  --foreground: #ffffff;
+  --foreground: #fef9f3;
   --card: #0d0d0d;
-  --card-foreground: #ffffff;
+  --card-foreground: #fef9f3;
   --popover: #0d0d0d;
-  --popover-foreground: #ffffff;
+  --popover-foreground: #fef9f3;
   --primary: #DFFF00;
   --primary-foreground: #000000;
   --secondary: #1a1a1a;
-  --secondary-foreground: #ffffff;
+  --secondary-foreground: #fef9f3;
   --muted: #1a1a1a;
   --muted-foreground: #888888;
   --accent: #DFFF00;
   --accent-foreground: #000000;
   --destructive: #ff3333;
-  --destructive-foreground: #ffffff;
+  --destructive-foreground: #fef9f3;
   --border: #222222;
   --input: #1a1a1a;
   --ring: #DFFF00;
   --sidebar: #0d0d0d;
-  --sidebar-foreground: #ffffff;
+  --sidebar-foreground: #fef9f3;
   --sidebar-primary: #DFFF00;
   --sidebar-primary-foreground: #000000;
   --sidebar-accent: #1a1a1a;
-  --sidebar-accent-foreground: #ffffff;
+  --sidebar-accent-foreground: #fef9f3;
   --sidebar-border: #222222;
   --sidebar-ring: #DFFF00;
 }
@@ -79,6 +79,7 @@
   --font-display: var(--font-space-grotesk), 'Space Grotesk', sans-serif;
   --font-secondary: var(--font-dm-sans), 'DM Sans', sans-serif;
   --font-mono: ui-monospace, 'Geist Mono', monospace;
+  --color-white: #fef9f3;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -257,7 +258,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .dark .glass-card-content span.title {
-  color: #ffffff !important;
+  color: #fef9f3 !important;
 }
 
 .glass-card-content span.text {
@@ -268,7 +269,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .dark .glass-card-content span.text {
-  color: #ffffff !important;
+  color: #fef9f3 !important;
 }
 
 .glass-card-bottom {
@@ -294,7 +295,7 @@ input[type="range"]::-moz-range-thumb {
   width: 30px;
   aspect-ratio: 1;
   padding: 5px;
-  background: #ffffff;
+  background: #fef9f3;
   border-radius: 50%;
   border: none;
   display: grid;

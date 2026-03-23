@@ -96,14 +96,11 @@ export function Navbar() {
         {/* Logo - switches based on theme */}
         <Link href="/" className="flex items-center group" aria-label="Arnica — Inicio">
           <Image
-            src={theme === 'dark' 
-              ? 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Arnica_logo-8Uy5GvJpH77M7VC5hEz83NOZI2ZOqh.png'
-              : 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Arnica_logo_black-cQaFbk2rrt5lnksHDyYpSREWZ1AnkV.png'
-            }
-            alt="Arnica"
-            width={120}
-            height={48}
-            className="h-10 w-auto object-contain transition-opacity duration-300 group-hover:opacity-80"
+            src={theme === 'dark' ? "/logos/fb-logo-white.png" : "/logos/fb-logo-black.png"}
+            alt="Fernando Ballesteros"
+            width={180}
+            height={60}
+            className="h-12 w-auto object-contain transition-opacity duration-300 group-hover:opacity-80"
             priority
           />
         </Link>

@@ -35,10 +35,10 @@ function useRubikScene(
     camera.position.set(0, 0, 9)
 
     // ── Lights ────────────────────────────────────────────────
-    const ambient = new THREE.AmbientLight('#ffffff', 0.35)
+    const ambient = new THREE.AmbientLight('#fef9f3', 0.35)
     scene.add(ambient)
 
-    const dirLight = new THREE.DirectionalLight('#ffffff', 2.5)
+    const dirLight = new THREE.DirectionalLight('#fef9f3', 2.5)
     dirLight.position.set(6, 8, 5)
     dirLight.castShadow = true
     scene.add(dirLight)
@@ -66,7 +66,7 @@ function useRubikScene(
     scene.add(particles)
 
     // ── Cube materials ────────────────────────────────────────
-    const FACE_COLORS = ['#FF5C00', '#0a0a0a', '#ffffff', '#1a1a1a', '#FF5C00', '#111111']
+    const FACE_COLORS = ['#FF5C00', '#0a0a0a', '#fef9f3', '#1a1a1a', '#FF5C00', '#111111']
     const faceMats = FACE_COLORS.map(color =>
       new THREE.MeshStandardMaterial({ color, roughness: 0.12, metalness: color === '#FF5C00' ? 0.6 : 0.3 })
     )

@@ -3,6 +3,7 @@ import { Space_Grotesk, DM_Sans, Inconsolata } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { ThemeProvider } from '@/components/theme-provider'
 import { LenisProvider } from '@/components/lenis-provider'
+import { WhatsAppButton } from '@/components/whatsapp-button'
 import './globals.css'
 
 const spaceGrotesk = Space_Grotesk({
@@ -38,9 +39,6 @@ export const viewport = {
   themeColor: '#000000',
   userScalable: false,
 }
-
-import { ArnicaAI } from '@/components/arnica-ai'
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -52,9 +50,9 @@ export default function RootLayout({
         <ThemeProvider>
           <LenisProvider>
             {children}
-            <ArnicaAI />
           </LenisProvider>
         </ThemeProvider>
+        <WhatsAppButton />
         <Analytics />
       </body>
     </html>

@@ -18,7 +18,7 @@ export default function ContactanosPage() {
             </p>
           </FadeUp>
           <FadeUp delay={0.1}>
-            <h1 className="text-foreground leading-tight text-balance">
+            <h1 className="text-foreground leading-tight text-balance font-sans font-semibold tracking-[0.15em] uppercase" style={{ fontSize: 'clamp(1.2rem, 2.5vw, 1.8rem)' }}>
               HABLEMOS SOBRE<br />
               <span className="text-primary">TU PROYECTO.</span>
             </h1>

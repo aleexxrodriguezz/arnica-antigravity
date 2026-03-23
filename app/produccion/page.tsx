@@ -61,9 +61,9 @@ export default function ProduccionPage() {
           </FadeUp>
           <ParallaxLayer speed={0.08}>
             <h1
-              className="text-foreground text-balance font-sans"
+              className="text-foreground text-balance font-sans font-semibold tracking-[0.15em] uppercase"
               style={{
-                fontSize: 'clamp(1.4rem, 3vw, 2.25rem)',
+                fontSize: 'clamp(1.2rem, 2.5vw, 1.8rem)',
                 lineHeight: 1.05,
               }}
             >
@@ -111,9 +111,9 @@ export default function ProduccionPage() {
           <FadeUp>
             <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground mb-6">Formatos</p>
             <h2
-              className="text-foreground text-balance font-sans"
+              className="text-foreground text-balance font-sans font-semibold tracking-[0.15em] uppercase"
               style={{
-                fontSize: 'clamp(1.8rem, 4vw, 3rem)',
+                fontSize: 'clamp(1.2rem, 2.5vw, 1.8rem)',
                 lineHeight: 1.1,
               }}
             >
@@ -142,9 +142,9 @@ export default function ProduccionPage() {
         <FadeUp>
           <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-8">
             <h2
-              className="text-foreground text-balance font-sans"
+              className="text-foreground text-balance font-sans font-semibold tracking-[0.15em] uppercase"
               style={{
-                fontSize: 'clamp(1.8rem, 4vw, 3rem)',
+                fontSize: 'clamp(1.2rem, 2.5vw, 1.8rem)',
                 lineHeight: 1.1,
               }}
             >

@@ -31,7 +31,7 @@ export function Footer() {
         <div>
           <span className="text-primary font-extrabold text-xl tracking-tight">ARNICA</span>
           <p className="text-muted-foreground text-xs mt-1">
-            Agencia de Publicidad — Madrid, España
+            Agencia de Publicidad — Torrelaguna 125, Madrid 28850
           </p>
         </div>
 

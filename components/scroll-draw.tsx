@@ -11,13 +11,13 @@ import { useIsMobile } from '@/hooks/use-mobile'
    Dark mode (night): white lines
    ─────────────────────────────────────────────────────────────────── */
 const getColors = (isDark: boolean) => ({
-  primary: isDark ? '#FFFFFF' : '#000000',
-  primaryAlpha50: isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)',
-  primaryAlpha35: isDark ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.35)',
-  primaryAlpha20: isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
-  secondary: isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.15)',
-  secondaryMuted: isDark ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.12)',
-  secondaryFaint: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
+  primary: isDark ? '#fef9f3' : '#000000',
+  primaryAlpha50: isDark ? 'rgba(254,249,243,0.5)' : 'rgba(0,0,0,0.5)',
+  primaryAlpha35: isDark ? 'rgba(254,249,243,0.35)' : 'rgba(0,0,0,0.35)',
+  primaryAlpha20: isDark ? 'rgba(254,249,243,0.2)' : 'rgba(0,0,0,0.2)',
+  secondary: isDark ? 'rgba(254,249,243,0.25)' : 'rgba(0,0,0,0.15)',
+  secondaryMuted: isDark ? 'rgba(254,249,243,0.18)' : 'rgba(0,0,0,0.12)',
+  secondaryFaint: isDark ? 'rgba(254,249,243,0.12)' : 'rgba(0,0,0,0.08)',
   nodeSecondary: isDark ? '#333333' : 'rgba(0,0,0,0.4)',
   nodeFaint: isDark ? '#555555' : 'rgba(0,0,0,0.3)',
   nodeStroke: isDark ? '#1a1a1a' : 'transparent',
@@ -262,7 +262,7 @@ export function ScrollDrawSection() {
             className="absolute inset-0 pointer-events-none"
             style={{
               background: isDark 
-                ? 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255,255,255,0.08) 0%, transparent 70%)'
+                ? 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(254,249,243,0.08) 0%, transparent 70%)'
                 : 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,0,0,0.05) 0%, transparent 70%)',
               opacity: 1
             }}
@@ -311,7 +311,7 @@ export function ScrollDrawSection() {
               {/* Background grid */}
               <defs>
                 <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
-                  <path d="M50 0L0 0 0 50" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
+                  <path d="M50 0L0 0 0 50" fill="none" stroke="rgba(254,249,243,0.03)" strokeWidth="1" />
                 </pattern>
               </defs>
               <rect width="1000" height="700" fill="url(#grid)" />

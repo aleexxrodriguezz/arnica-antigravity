@@ -31,7 +31,7 @@ export function RubikCubeSection() {
       style={{ perspective: 1200 }}
     >
       <div className="absolute inset-0 pointer-events-none -z-10 flex items-center justify-center">
-        <div className="w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] dark:bg-white/5 bg-primary/10 blur-[120px] rounded-full" />
+        <div className="w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] dark:bg-[#fef9f3]/5 bg-primary/10 blur-[120px] rounded-full" />
       </div>
 
       <motion.div
@@ -53,10 +53,10 @@ export function RubikCubeSection() {
             {[0, 1, 2, 3].map((cell) => (
               <div
                 key={cell}
-                className="w-full h-full rounded-sm border border-border/30 bg-secondary/10 dark:bg-white/5 backdrop-blur-md shadow-[inset_0_0_20px_rgba(0,0,0,0.2)] overflow-hidden group flex items-center justify-center transition-all duration-500 hover:bg-primary/20 dark:hover:bg-white/10 hover:border-primary/50 dark:hover:border-white/30"
+                className="w-full h-full rounded-sm border border-border/30 bg-secondary/10 dark:bg-[#fef9f3]/5 backdrop-blur-md shadow-[inset_0_0_20px_rgba(0,0,0,0.2)] overflow-hidden group flex items-center justify-center transition-all duration-500 hover:bg-primary/20 dark:hover:bg-[#fef9f3]/10 hover:border-primary/50 dark:hover:border-[#fef9f3]/30"
               >
                 {/* Empty space ready for images in the future */}
-                <div className="w-4 h-4 rounded-full bg-primary/20 dark:bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
+                <div className="w-4 h-4 rounded-full bg-primary/20 dark:bg-[#fef9f3]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
               </div>
             ))}
           </div>

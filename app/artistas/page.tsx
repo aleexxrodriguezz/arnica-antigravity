@@ -37,7 +37,7 @@ export default function ArtistasPage() {
                 </p>
               </MaskReveal>
               <ParallaxLayer speed={0.05}>
-                <h1 className="text-foreground leading-[0.9] font-sans" style={{ fontSize: 'clamp(3rem, 8vw, 6rem)', letterSpacing: '0.05em' }}>
+                <h1 className="text-foreground leading-[0.9] font-sans font-semibold tracking-[0.15em] uppercase" style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)' }}>
                   FERNANDO<br />
                   <span className="text-primary italic">BALLESTEROS</span>
                 </h1>
@@ -55,43 +55,40 @@ export default function ArtistasPage() {
       </section>
 
       {/* Profile Section with Logo */}
-      <section className="py-40 bg-background relative overflow-hidden">
+      <section className="py-24 bg-background relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 items-center">
-            
-            {/* Logo and Static Image */}
-            <div className="lg:col-span-5 relative">
+          <div className="flex flex-col items-center mb-24">
+            <FadeUp>
+              <Image
+                src="/logos/fb-logo-white.png"
+                alt="Fernando Ballesteros Logo"
+                width={400}
+                height={200}
+                className="w-full max-w-[450px] h-auto"
+                priority
+              />
+            </FadeUp>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 items-start">
+            {/* Image side */}
+            <div className="lg:col-span-5">
               <FadeUp>
-                <div className="relative aspect-square bg-card border border-border p-12 flex flex-col items-center justify-center overflow-hidden group">
-                  <div className="absolute inset-0 opacity-10 grayscale brightness-50 z-0 transition-transform duration-700 group-hover:scale-110">
-                    <Image
-                      src="/artistas/fb-car-side.jpg"
-                      alt="Fernando details"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="relative z-10 w-full max-w-[280px]">
-                    <Image
-                      src="/artistas/fb-logo-v2.png"
-                      alt="Fernando Ballesteros Logo"
-                      width={600}
-                      height={300}
-                      className="w-full h-auto filter invert brightness-[2] contrast-125 mix-blend-screen"
-                    />
-                  </div>
+                <div className="relative aspect-[4/5] overflow-hidden border border-border">
+                  <Image
+                    src="/artistas/fb-car-side.jpg"
+                    alt="Fernando Ballesteros"
+                    fill
+                    className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
+                  />
                 </div>
               </FadeUp>
-              {/* Decorative text */}
-              <div className="absolute -bottom-10 -right-6 hidden lg:block select-none pointer-events-none opacity-5">
-                <span className="text-9xl font-black text-foreground">FB</span>
-              </div>
             </div>
 
-            {/* Persuasive Copy */}
+            {/* Text side */}
             <div className="lg:col-span-7">
               <FadeUp delay={0.1}>
-                <h2 className="text-foreground leading-tight font-sans mb-12" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.75rem)', letterSpacing: '0.05em' }}>
+                <h2 className="text-foreground leading-tight font-sans font-semibold tracking-[0.15em] uppercase mb-12" style={{ fontSize: 'clamp(1.2rem, 2.5vw, 1.8rem)' }}>
                   EL ARTE DE LA <span className="text-primary">VIBRACIÓN</span>
                 </h2>
               </FadeUp>

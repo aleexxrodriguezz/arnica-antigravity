@@ -61,7 +61,7 @@ function ParticleCanvas() {
         vy: (Math.random() - 0.5) * 0.4,
         size: Math.random() * 2 + 0.5,
         alpha: Math.random() * 0.6 + 0.1,
-        color: Math.random() > 0.7 ? '#ff5c00' : '#ffffff',
+        color: Math.random() > 0.7 ? '#ff5c00' : '#fef9f3',
       })
     }
 
@@ -155,12 +155,12 @@ export default function AtrezoPage() {
           </div>
 
           {/* Main heading */}
-          <h1 className="leading-none text-foreground font-sans mb-2"
-            style={{ fontSize: 'clamp(1.5rem, 3.5vw, 2.75rem)' }}>
+          <h1 className="leading-none text-foreground font-sans font-semibold tracking-[0.15em] uppercase mb-2"
+            style={{ fontSize: 'clamp(1.2rem, 2.5vw, 1.8rem)' }}>
             <ScrambleText text="ATREZO" delay={300} />
           </h1>
-          <h2 className="leading-none text-foreground font-sans mb-12"
-            style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.8rem)' }}>
+          <h2 className="leading-none text-foreground font-sans font-semibold tracking-[0.15em] uppercase mb-12"
+            style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1.4rem)' }}>
             <span className="text-primary">
               <ScrambleText text="/ PLV" delay={600} />
             </span>

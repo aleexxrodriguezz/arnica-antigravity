@@ -34,7 +34,7 @@ export default function AgenciaPage() {
             </p>
           </FadeUp>
           <FadeUp delay={0.1}>
-            <h1 className="text-foreground leading-tight text-balance">
+            <h1 className="text-foreground leading-tight text-balance font-sans font-semibold tracking-[0.15em] uppercase" style={{ fontSize: 'clamp(1.2rem, 2.5vw, 1.8rem)' }}>
               CREAMOS CULTURA.<br />
               <span className="text-primary">NO SOLO CONTENIDO.</span>
             </h1>
@@ -49,7 +49,7 @@ export default function AgenciaPage() {
                 <div className="w-12 h-12 rounded-sm bg-primary/10 flex items-center justify-center mb-8 border border-primary/20 group-hover:bg-primary/20 transition-colors">
                   <service.icon className="w-5 h-5 text-primary" />
                 </div>
-                <h2 className="text-xl mb-4 text-foreground">{service.title}</h2>
+                <h2 className="text-sm font-bold tracking-widest text-foreground uppercase mb-4">{service.title}</h2>
                 <p className="text-muted-foreground text-sm leading-relaxed text-pretty">
                   {service.desc}
                 </p>
@@ -61,7 +61,7 @@ export default function AgenciaPage() {
         {/* Closing Statement */}
         <div className="mt-40 border-t border-border pt-20 max-w-2xl">
           <FadeUp delay={0.2}>
-            <h3 className="text-foreground text-2xl mb-6">
+            <h3 className="text-foreground font-sans font-semibold tracking-[0.15em] uppercase mb-6" style={{ fontSize: 'clamp(1.1rem, 2vw, 1.4rem)' }}>
               UNA APROXIMACIÓN DIFERENTE
             </h3>
             <p className="text-muted-foreground text-lg leading-relaxed text-pretty">

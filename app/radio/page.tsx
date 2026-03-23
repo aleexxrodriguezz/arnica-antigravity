@@ -14,8 +14,8 @@ export default function RadioPage() {
         <p className="text-xs tracking-[0.4em] uppercase text-primary font-medium mb-6">Radio</p>
 
         <h1
-          className="text-foreground text-balance mb-6 font-sans"
-          style={{ fontSize: 'clamp(1.4rem, 3vw, 2.25rem)' }}
+          className="text-foreground text-balance mb-6 font-sans font-semibold tracking-[0.15em] uppercase"
+          style={{ fontSize: 'clamp(1.2rem, 2.5vw, 1.8rem)' }}
         >
           COMING SOON
         </h1>
