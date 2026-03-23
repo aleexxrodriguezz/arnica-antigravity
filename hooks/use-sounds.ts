@@ -34,7 +34,7 @@ export function useParallaxTechSound() {
       }
 
       if (!bufferRef.current) {
-        const response = await fetch('/audio/SonidoParallaxArnica.mp3?v=1.1')
+        const response = await fetch('/audio/LittleRobotParallax.mp3?v=1.2')
         const arrayBuffer = await response.arrayBuffer()
         bufferRef.current = await ctxRef.current.decodeAudioData(arrayBuffer)
       }
@@ -59,6 +59,7 @@ export function useParallaxTechSound() {
     const source = ctxRef.current.createBufferSource()
     source.buffer = bufferRef.current
     source.loop = true
+    source.playbackRate.value = 0.75 // 0.75 speed as requested
     source.connect(masterRef.current)
     source.start(0)
     sourceRef.current = source
