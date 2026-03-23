@@ -12,12 +12,12 @@ import { cn } from '@/lib/utils'
 
 const NAV_LINKS = [
   { label: 'Agencia',    href: '/agencia' },
-  { label: 'Radio',      href: '/radio' },
-  { label: 'Producción', href: '/produccion' },
-  { label: 'VFX',        href: '/motion' },
   { label: 'Artistas',   href: '/contactanos' },
   { label: 'Atrezo/PLV', href: '/atrezo' },
   { label: 'Contáctanos',  href: '/contactanos' },
+  { label: 'Producción', href: '/produccion' },
+  { label: 'Radio',      href: '/radio' },
+  { label: 'VFX',        href: '/motion' },
 ]
 
 const GLITCH_CHARS = '@#$%&!?*<>~^'
