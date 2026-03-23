@@ -141,8 +141,8 @@ export function ScrollDrawSection() {
     offset: ['start start', 'end end'],
   })
 
-  // Mapeamos el progreso para que empiece al 7% del scroll de la sección y termine al 90%
-  const progress = useTransform(scrollYProgress, [0.07, 0.90], [0, 1], { clamp: true })
+  // Mapeamos el progreso para que empiece al 20% del scroll de la sección (aprox 7% del total de la página)
+  const progress = useTransform(scrollYProgress, [0.20, 0.90], [0, 1], { clamp: true })
   const [currentProgress, setCurrentProgress] = useState(0)
   
   useMotionValueEvent(progress, 'change', v => {
