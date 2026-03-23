@@ -80,7 +80,7 @@ function ManifestoSection() {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           <div>
-            <motion.h2 className="leading-tight text-foreground text-balance font-sans" style={{ fontSize: 'clamp(2rem, 4vw, 3.75rem)', x: x1 }}>
+            <motion.h2 className="leading-tight text-foreground text-balance font-sans" style={{ fontSize: 'clamp(1.5rem, 3.5vw, 2.75rem)', x: x1 }}>
               MANIFIESTO
             </motion.h2>
           </div>
@@ -107,7 +107,7 @@ function ServicesSection() {
           <div>
             <FadeUp><p className="text-xs tracking-[0.4em] uppercase text-primary font-mono mb-4">Servicios</p></FadeUp>
             <FadeUp delay={0.1}>
-              <h2 className="text-foreground leading-tight text-balance font-sans" style={{ fontSize: 'clamp(1.75rem, 3.5vw, 3.75rem)' }}>
+              <h2 className="text-foreground leading-tight text-balance font-sans" style={{ fontSize: 'clamp(1.4rem, 3vw, 2.25rem)' }}>
                 Lo que<br />hacemos.
               </h2>
             </FadeUp>
@@ -149,7 +149,7 @@ function StatsSection() {
           {STATS.map(({ value, label }, i) => (
             <MaskReveal key={label} direction="up" delay={i * 0.1}>
               <div className="bg-background px-8 py-12 flex flex-col gap-3">
-                <span className="text-primary leading-none font-sans" style={{ fontSize: 'clamp(2rem, 3.5vw, 3.75rem)', fontWeight: 700 }}><AnimatedCounter target={value} /></span>
+                <span className="text-primary leading-none font-sans" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', fontWeight: 700 }}><AnimatedCounter target={value} /></span>
                 <span className="text-muted-foreground text-sm font-medium tracking-wide">{label}</span>
               </div>
             </MaskReveal>
@@ -171,7 +171,7 @@ function TechStatement() {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-16 items-center">
           <div>
             <FadeUp><p className="text-xs tracking-[0.4em] uppercase text-primary font-mono mb-8">Nuestra tecnología</p></FadeUp>
-            <motion.h2 className="text-foreground leading-tight text-balance font-sans" style={{ fontSize: 'clamp(1.75rem, 3.5vw, 3.75rem)', x }}>
+            <motion.h2 className="text-foreground leading-tight text-balance font-sans" style={{ fontSize: 'clamp(1.4rem, 3vw, 2.25rem)', x }}>
               <span className="text-primary">Resultados reales.</span>
             </motion.h2>
             <FadeUp delay={0.15}><p className="mt-8 text-muted-foreground text-lg leading-relaxed max-w-xl text-pretty">Integramos modelos de IA de última generación en cada disciplina creativa — desde la composición musical generativa hasta el desarrollo de efectos visuales avanzados — para ofrecer resultados imposibles de alcanzar por medios tradicionales.</p></FadeUp>
@@ -208,7 +208,7 @@ function ProcessSection() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="mb-20">
           <FadeUp><p className="text-xs tracking-[0.4em] uppercase text-primary font-mono mb-4">Proceso</p></FadeUp>
-            <FadeUp delay={0.1}><h2 className="text-foreground leading-tight text-balance font-sans" style={{ fontSize: 'clamp(1.75rem, 3.5vw, 3.75rem)' }}>LO QUE NOS DEFINE</h2></FadeUp>
+            <FadeUp delay={0.1}><h2 className="text-foreground leading-tight text-balance font-sans" style={{ fontSize: 'clamp(1.4rem, 3vw, 2.25rem)' }}>LO QUE NOS DEFINE</h2></FadeUp>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {steps.map(({ n, title, desc }, i) => (
@@ -229,7 +229,7 @@ function CtaSection() {
   return (
     <section className="py-40 border-t border-border">
       <div className="max-w-4xl mx-auto px-6 text-center">
-            <FadeUp><h2 className="text-foreground leading-tight text-balance font-sans" style={{ fontSize: 'clamp(1.75rem, 3.5vw, 3.75rem)' }}>¿LISTO PARA CREAR ALGO EXTRAORDINARIO?</h2></FadeUp>
+            <FadeUp><h2 className="text-foreground leading-tight text-balance font-sans" style={{ fontSize: 'clamp(1.4rem, 3vw, 2.25rem)' }}>¿LISTO PARA CREAR ALGO EXTRAORDINARIO?</h2></FadeUp>
         <FadeUp delay={0.1}><p className="mt-6 text-muted-foreground text-lg leading-relaxed max-w-2xl mx-auto text-pretty">Hablemos sobre tu proyecto. No hay ideas demasiado ambiciosas, ni presupuestos demasiado pequeños.</p></FadeUp>
         <FadeUp delay={0.2}>
           <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center">

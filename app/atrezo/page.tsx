@@ -156,11 +156,11 @@ export default function AtrezoPage() {
 
           {/* Main heading */}
           <h1 className="leading-none text-foreground font-sans mb-2"
-            style={{ fontSize: 'clamp(2rem, 3.5vw, 3.75rem)' }}>
+            style={{ fontSize: 'clamp(1.5rem, 3.5vw, 2.75rem)' }}>
             <ScrambleText text="ATREZO" delay={300} />
           </h1>
           <h2 className="leading-none text-foreground font-sans mb-12"
-            style={{ fontSize: 'clamp(1.5rem, 3vw, 3rem)' }}>
+            style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.8rem)' }}>
             <span className="text-primary">
               <ScrambleText text="/ PLV" delay={600} />
             </span>

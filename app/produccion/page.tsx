@@ -63,7 +63,7 @@ export default function ProduccionPage() {
             <h1
               className="text-foreground text-balance font-sans"
               style={{
-                fontSize: 'clamp(1.75rem, 3.5vw, 3.75rem)',
+                fontSize: 'clamp(1.4rem, 3vw, 2.25rem)',
                 lineHeight: 1.05,
               }}
             >

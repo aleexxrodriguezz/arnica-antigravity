@@ -15,7 +15,7 @@ export default function RadioPage() {
 
         <h1
           className="text-foreground text-balance mb-6 font-sans"
-          style={{ fontSize: 'clamp(1.75rem, 3.5vw, 3.75rem)' }}
+          style={{ fontSize: 'clamp(1.4rem, 3vw, 2.25rem)' }}
         >
           COMING SOON
         </h1>

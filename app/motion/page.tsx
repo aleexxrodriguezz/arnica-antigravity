@@ -65,7 +65,7 @@ export default function MotionPage() {
             <p className="text-xs tracking-[0.4em] uppercase text-primary font-mono mb-4">Tutoriales</p>
           </FadeUp>
           <ParallaxLayer speed={0.08}>
-            <h1 className="text-4xl md:text-5xl text-foreground text-balance font-sans" style={{ fontSize: 'clamp(1.75rem, 3.5vw, 3.75rem)' }}>
+            <h1 className="text-4xl md:text-5xl text-foreground text-balance font-sans" style={{ fontSize: 'clamp(1.4rem, 3vw, 2.25rem)' }}>
               Motion
             </h1>
           </ParallaxLayer>
