@@ -65,7 +65,7 @@ export default function MotionPage() {
             <p className="text-xs tracking-[0.4em] uppercase text-primary font-mono mb-4">Tutoriales</p>
           </FadeUp>
           <ParallaxLayer speed={0.08}>
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground text-balance font-sans" style={{ fontSize: 'clamp(1.75rem, 3.5vw, 3.75rem)' }}>
+            <h1 className="text-4xl md:text-5xl text-foreground text-balance font-sans" style={{ fontSize: 'clamp(1.75rem, 3.5vw, 3.75rem)' }}>
               Motion
             </h1>
           </ParallaxLayer>
@@ -117,7 +117,7 @@ export default function MotionPage() {
                   </span>
                   <span className="text-xs text-muted-foreground font-mono">{video.duration}</span>
                 </div>
-                <h3 className="font-bold text-foreground text-base mb-2 leading-snug group-hover:text-primary transition-colors">
+                <h3 className="text-foreground text-base mb-2 leading-snug group-hover:text-primary transition-colors">
                   {video.title}
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed flex-1">
@@ -136,7 +136,7 @@ export default function MotionPage() {
               <Film className="w-7 h-7 text-primary" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-foreground">¿Necesitas un proyecto de Motion?</h3>
+              <h3 className="text-xl text-foreground">¿Necesitas un proyecto de Motion?</h3>
               <p className="text-muted-foreground text-sm mt-1">Llevamos tu marca al siguiente nivel con animaciones de impacto.</p>
             </div>
           </div>

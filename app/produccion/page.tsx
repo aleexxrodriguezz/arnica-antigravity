@@ -61,10 +61,9 @@ export default function ProduccionPage() {
           </FadeUp>
           <ParallaxLayer speed={0.08}>
             <h1
-              className="font-bold uppercase tracking-wide text-foreground text-balance font-sans"
+              className="text-foreground text-balance font-sans"
               style={{
                 fontSize: 'clamp(1.75rem, 3.5vw, 3.75rem)',
-                letterSpacing: '0.04em',
                 lineHeight: 1.05,
               }}
             >
@@ -95,10 +94,7 @@ export default function ProduccionPage() {
                 <div className="w-10 h-10 border border-border rounded-sm flex items-center justify-center">
                   <Icon className="w-5 h-5 text-primary" />
                 </div>
-                <h3
-                  className="text-sm font-bold uppercase tracking-widest text-foreground"
-
-                >
+                <h3 className="text-sm text-foreground">
                   {title}
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
@@ -115,10 +111,9 @@ export default function ProduccionPage() {
           <FadeUp>
             <p className="text-xs tracking-[0.4em] uppercase text-muted-foreground mb-6">Formatos</p>
             <h2
-              className="font-bold uppercase tracking-wide text-foreground text-balance font-sans"
+              className="text-foreground text-balance font-sans"
               style={{
                 fontSize: 'clamp(1.8rem, 4vw, 3rem)',
-                letterSpacing: '0.04em',
                 lineHeight: 1.1,
               }}
             >
@@ -147,10 +142,9 @@ export default function ProduccionPage() {
         <FadeUp>
           <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-8">
             <h2
-              className="font-bold uppercase tracking-wide text-foreground text-balance font-sans"
+              className="text-foreground text-balance font-sans"
               style={{
                 fontSize: 'clamp(1.8rem, 4vw, 3rem)',
-                letterSpacing: '0.04em',
                 lineHeight: 1.1,
               }}
             >

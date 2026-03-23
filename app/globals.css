@@ -131,16 +131,15 @@ html.lenis, html.lenis body {
     transition: background-color 0.4s ease, color 0.4s ease;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-sans);
-    font-size: min(var(--heading-size, 3.75rem), 3.75rem);
-    max-font-size: 3.75rem;
+    font-family: var(--font-sans) !important;
     text-transform: uppercase !important;
     letter-spacing: 0.15em !important;
+    font-weight: 500 !important;
   }
-  /* Hard cap: no heading ever exceeds 60px */
-  h1 { font-size: clamp(1.5rem, 4vw, 3.75rem); }
-  h2 { font-size: clamp(1.25rem, 3.5vw, 3.75rem); }
-  h3 { font-size: clamp(1rem, 2.5vw, 2rem); }
+  /* Responsive sizes */
+  h1 { font-size: clamp(1.75rem, 5vw, 3.75rem); }
+  h2 { font-size: clamp(1.5rem, 4vw, 3rem); }
+  h3 { font-size: clamp(1.25rem, 3vw, 2.25rem); }
 }
 
 /* ─── GLITCH ANIMATION ─────────────────────────────── */

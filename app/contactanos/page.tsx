@@ -38,7 +38,7 @@ export default function ContactanosPage() {
                   <Phone className="w-4 h-4 text-foreground group-hover:text-primary transition-colors" />
                 </div>
                 <div>
-                  <h3 className="text-sm tracking-widest text-muted-foreground mb-2">TELÉFONO</h3>
+                  <h3 className="text-muted-foreground mb-2">TELÉFONO</h3>
                   <p className="text-xl font-medium text-foreground tracking-widest">+34 676 30 20 85</p>
                 </div>
               </a>
@@ -48,7 +48,7 @@ export default function ContactanosPage() {
                   <Mail className="w-4 h-4 text-foreground group-hover:text-primary transition-colors" />
                 </div>
                 <div>
-                  <h3 className="text-sm tracking-widest text-muted-foreground mb-2">EMAIL</h3>
+                  <h3 className="text-muted-foreground mb-2">EMAIL</h3>
                   <p className="text-lg md:text-xl font-medium text-foreground tracking-widest">dj676302085@gmail.com</p>
                 </div>
               </a>
