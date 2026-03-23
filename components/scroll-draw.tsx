@@ -146,13 +146,15 @@ export function ScrollDrawSection() {
   const [currentProgress, setCurrentProgress] = useState(0)
   
   useMotionValueEvent(progress, 'change', v => {
-    setCurrentProgress(v)
+    // Aseguramos que el progreso sea estrictamente 0 hasta superar el umbral del 7%
+    const clampedV = v < 0.01 ? 0 : v
+    setCurrentProgress(clampedV)
     
     // Skip sound logic on mobile
     if (isMobile) return
 
     // Sound logic
-    const inZone = v > 0 && v < 1.0
+    const inZone = clampedV > 0 && clampedV < 1.0
     
     if (inZone) {
       if (!inSoundZoneRef.current) {
