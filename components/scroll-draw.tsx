@@ -1,18 +1,323 @@
 'use client'
 
-export function ScrollDrawSection() {
+import { useRef, useEffect, useState } from 'react'
+import { useScroll, useTransform, motion, useMotionValueEvent } from 'framer-motion'
+import { useTheme } from '@/components/theme-provider'
+import { useParallaxTechSound } from '@/hooks/use-sounds'
+import { useIsMobile } from '@/hooks/use-mobile'
+
+/* ─── Theme-aware color helpers ───────────────────────────────────── */
+const getColors = (isDark: boolean) => ({
+  primary: isDark ? '#fef9f3' : '#000000',
+  primaryAlpha50: isDark ? 'rgba(254,249,243,0.5)' : 'rgba(0,0,0,0.5)',
+  primaryAlpha35: isDark ? 'rgba(254,249,243,0.35)' : 'rgba(0,0,0,0.35)',
+  primaryAlpha20: isDark ? 'rgba(254,249,243,0.2)' : 'rgba(0,0,0,0.2)',
+  secondary: isDark ? 'rgba(254,249,243,0.25)' : 'rgba(0,0,0,0.15)',
+  secondaryMuted: isDark ? 'rgba(254,249,243,0.18)' : 'rgba(0,0,0,0.12)',
+  secondaryFaint: isDark ? 'rgba(254,249,243,0.12)' : 'rgba(0,0,0,0.08)',
+  nodeSecondary: isDark ? '#333333' : 'rgba(0,0,0,0.4)',
+  nodeFaint: isDark ? '#555555' : 'rgba(0,0,0,0.3)',
+  nodeStroke: isDark ? '#1a1a1a' : 'transparent',
+})
+
+/* ─── Path data generator ─────────────────────────────────────────── */
+const getPaths = (colors: ReturnType<typeof getColors>) => [
+  { d: 'M500 30 L500 670', startAt: 0, endAt: 0.08, color: colors.primary, width: 1.5, label: 'CORE', labelX: 514, labelY: 350 },
+  { d: 'M140 130 L860 130', startAt: 0.04, endAt: 0.12, color: colors.secondary, width: 1 },
+  { d: 'M100 350 L900 350', startAt: 0.08, endAt: 0.17, color: colors.secondaryMuted, width: 1 },
+  { d: 'M140 570 L860 570', startAt: 0.14, endAt: 0.22, color: colors.secondary, width: 1 },
+  { d: 'M500 130 L500 130 L280 130 L200 210', startAt: 0.10, endAt: 0.18, color: colors.primary, width: 1.5 },
+  { d: 'M500 350 L280 350 L180 350', startAt: 0.15, endAt: 0.23, color: colors.primary, width: 1.5, label: 'INPUT', labelX: 152, labelY: 345 },
+  { d: 'M500 570 L280 570 L200 490', startAt: 0.20, endAt: 0.28, color: colors.primary, width: 1.5 },
+  { d: 'M500 130 L720 130 L800 210', startAt: 0.10, endAt: 0.18, color: colors.primary, width: 1.5 },
+  { d: 'M500 350 L720 350 L820 350', startAt: 0.15, endAt: 0.23, color: colors.primary, width: 1.5, label: 'OUTPUT', labelX: 824, labelY: 345 },
+  { d: 'M500 570 L720 570 L800 490', startAt: 0.20, endAt: 0.28, color: colors.primary, width: 1.5 },
+  { d: 'M200 210 L200 490', startAt: 0.22, endAt: 0.30, color: colors.secondary, width: 1 },
+  { d: 'M120 210 L280 210', startAt: 0.24, endAt: 0.31, color: colors.secondary, width: 1 },
+  { d: 'M120 350 L280 350', startAt: 0.25, endAt: 0.32, color: colors.secondary, width: 1 },
+  { d: 'M120 490 L280 490', startAt: 0.26, endAt: 0.33, color: colors.secondary, width: 1 },
+  { d: 'M120 210 L120 490', startAt: 0.27, endAt: 0.34, color: colors.secondary, width: 1 },
+  { d: 'M800 210 L800 490', startAt: 0.22, endAt: 0.30, color: colors.secondary, width: 1 },
+  { d: 'M720 210 L880 210', startAt: 0.24, endAt: 0.31, color: colors.secondary, width: 1 },
+  { d: 'M720 350 L880 350', startAt: 0.25, endAt: 0.32, color: colors.secondary, width: 1 },
+  { d: 'M720 490 L880 490', startAt: 0.26, endAt: 0.33, color: colors.secondary, width: 1 },
+  { d: 'M880 210 L880 490', startAt: 0.27, endAt: 0.34, color: colors.secondary, width: 1 },
+  { d: 'M500 350 m-90,0 a90,90 0 1,0 180,0 a90,90 0 1,0 -180,0', startAt: 0.32, endAt: 0.44, color: colors.primary, width: 1.5, label: 'PROCESS', labelX: 452, labelY: 354 },
+  { d: 'M500 350 m-140,0 a140,140 0 1,0 280,0 a140,140 0 1,0 -280,0', startAt: 0.38, endAt: 0.50, color: colors.primaryAlpha35, width: 1 },
+  { d: 'M500 350 m-55,0 a55,55 0 1,0 110,0 a55,55 0 1,0 -110,0', startAt: 0.34, endAt: 0.43, color: colors.secondaryFaint, width: 1 },
+  { d: 'M500 260 L500 295', startAt: 0.36, endAt: 0.42, color: colors.secondary, width: 1 },
+  { d: 'M500 405 L500 440', startAt: 0.36, endAt: 0.42, color: colors.secondary, width: 1 },
+  { d: 'M410 350 L445 350', startAt: 0.36, endAt: 0.42, color: colors.secondary, width: 1 },
+  { d: 'M555 350 L590 350', startAt: 0.36, endAt: 0.42, color: colors.secondary, width: 1 },
+  { d: 'M200 210 Q340 280 410 310', startAt: 0.42, endAt: 0.52, color: colors.primaryAlpha50, width: 1 },
+  { d: 'M200 490 Q340 420 410 390', startAt: 0.42, endAt: 0.52, color: colors.primaryAlpha50, width: 1 },
+  { d: 'M800 210 Q660 280 590 310', startAt: 0.42, endAt: 0.52, color: colors.primaryAlpha50, width: 1 },
+  { d: 'M800 490 Q660 420 590 390', startAt: 0.42, endAt: 0.52, color: colors.primaryAlpha50, width: 1 },
+  { d: 'M120 210 L80 170 L80 80 L160 80', startAt: 0.50, endAt: 0.58, color: colors.secondaryMuted, width: 1, label: 'NODE_A', labelX: 80, labelY: 64 },
+  { d: 'M160 80 L440 80 L440 30', startAt: 0.54, endAt: 0.62, color: colors.secondaryFaint, width: 1 },
+  { d: 'M880 210 L920 170 L920 80 L840 80', startAt: 0.50, endAt: 0.58, color: colors.secondaryMuted, width: 1, label: 'NODE_B', labelX: 880, labelY: 64 },
+  { d: 'M840 80 L560 80 L560 30', startAt: 0.54, endAt: 0.62, color: colors.secondaryFaint, width: 1 },
+  { d: 'M120 490 L80 530 L80 620 L160 620', startAt: 0.56, endAt: 0.64, color: colors.secondaryMuted, width: 1, label: 'NODE_C', labelX: 80, labelY: 638 },
+  { d: 'M160 620 L440 620 L440 670', startAt: 0.60, endAt: 0.68, color: colors.secondaryFaint, width: 1 },
+  { d: 'M880 490 L920 530 L920 620 L840 620', startAt: 0.56, endAt: 0.64, color: colors.secondaryMuted, width: 1, label: 'NODE_D', labelX: 846, labelY: 638 },
+  { d: 'M840 620 L560 620 L560 670', startAt: 0.60, endAt: 0.68, color: colors.secondaryFaint, width: 1 },
+  { d: 'M340 130 L340 210', startAt: 0.62, endAt: 0.68, color: colors.secondaryFaint, width: 1 },
+  { d: 'M660 130 L660 210', startAt: 0.62, endAt: 0.68, color: colors.secondaryFaint, width: 1 },
+  { d: 'M340 490 L340 570', startAt: 0.62, endAt: 0.68, color: colors.secondaryFaint, width: 1 },
+  { d: 'M660 490 L660 570', startAt: 0.62, endAt: 0.68, color: colors.secondaryFaint, width: 1 },
+  { d: 'M500 350 m-200,0 a200,200 0 0,1 400,0', startAt: 0.68, endAt: 0.78, color: colors.primaryAlpha20, width: 1 },
+  { d: 'M500 350 m-200,0 a200,200 0 0,0 400,0', startAt: 0.70, endAt: 0.80, color: colors.primaryAlpha20, width: 1 },
+  { d: 'M500 150 L500 140', startAt: 0.75, endAt: 0.80, color: colors.primary, width: 2 },
+  { d: 'M500 560 L500 550', startAt: 0.75, endAt: 0.80, color: colors.primary, width: 2 },
+  { d: 'M300 350 L290 350', startAt: 0.75, endAt: 0.80, color: colors.primary, width: 2 },
+  { d: 'M710 350 L700 350', startAt: 0.75, endAt: 0.80, color: colors.primary, width: 2 },
+  { d: 'M420 350 L500 350', startAt: 0.80, endAt: 0.88, color: colors.primary, width: 2.5 },
+  { d: 'M500 350 L500 280', startAt: 0.83, endAt: 0.90, color: colors.primary, width: 2.5 },
+]
+
+const getNodes = (colors: ReturnType<typeof getColors>) => [
+  { cx: 500, cy: 30,  r: 4,   triggerAt: 0.02, color: colors.primary },
+  { cx: 500, cy: 670, r: 4,   triggerAt: 0.07, color: colors.primary },
+  { cx: 500, cy: 350, r: 7,   triggerAt: 0.35, color: colors.primary },
+  { cx: 200, cy: 210, r: 5,   triggerAt: 0.22, color: colors.nodeSecondary },
+  { cx: 200, cy: 490, r: 5,   triggerAt: 0.22, color: colors.nodeSecondary },
+  { cx: 800, cy: 210, r: 5,   triggerAt: 0.22, color: colors.nodeSecondary },
+  { cx: 800, cy: 490, r: 5,   triggerAt: 0.22, color: colors.nodeSecondary },
+  { cx: 120, cy: 350, r: 4,   triggerAt: 0.34, color: colors.primary },
+  { cx: 880, cy: 350, r: 4,   triggerAt: 0.34, color: colors.primary },
+  { cx: 340, cy: 130, r: 3.5, triggerAt: 0.63, color: colors.nodeFaint },
+  { cx: 660, cy: 130, r: 3.5, triggerAt: 0.63, color: colors.nodeFaint },
+  { cx: 340, cy: 570, r: 3.5, triggerAt: 0.63, color: colors.nodeFaint },
+  { cx: 660, cy: 570, r: 3.5, triggerAt: 0.63, color: colors.nodeFaint },
+  { cx: 500, cy: 130, r: 3.5, triggerAt: 0.13, color: colors.primary },
+  { cx: 500, cy: 570, r: 3.5, triggerAt: 0.21, color: colors.primary },
+]
+
+function DrawnPath({ d, color, width, progress, startAt, endAt }: {
+  d: string; color: string; width: number; progress: number; startAt: number; endAt: number
+}) {
+  const ref = useRef<SVGPathElement>(null)
+  const [length, setLength] = useState(0)
+
+  useEffect(() => {
+    if (ref.current) setLength(ref.current.getTotalLength())
+  }, [d])
+
+  if (!length) {
+    return <path ref={ref} d={d} stroke="transparent" strokeWidth={0} fill="none" />
+  }
+
+  const range = endAt - startAt
+  const local = Math.max(0, Math.min(1, (progress - startAt) / range))
+  const offset = length * (1 - local)
+
   return (
-    <section className="relative w-full h-[100dvh] overflow-hidden bg-[#05050a]">
-      <iframe
-        src="/vfx-hero.html"
-        className="absolute inset-0 w-full h-full border-none pointer-events-auto"
-        title="VFX Video Generator"
-      />
-      {/* 
-        This iframe loads the raw HTML application provided by the user.
-        The previous parallax scroll effect and its `useParallaxTechSound` have been removed completely.
-        Since it's an interactive canvas, pointer-events are enabled.
-      */}
+    <path
+      ref={ref}
+      d={d}
+      stroke={color}
+      strokeWidth={width}
+      fill="none"
+      strokeDasharray={length}
+      strokeDashoffset={offset}
+      strokeLinecap="round"
+    />
+  )
+}
+
+export function ScrollDrawSection() {
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const isMobile = useIsMobile()
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
+  const colors = getColors(isDark)
+  const PATHS = getPaths(colors)
+  const NODES = getNodes(colors)
+  const { play: playSound, stop: stopSound } = useParallaxTechSound()
+  const inSoundZoneRef = useRef(false)
+  
+  const { scrollYProgress } = useScroll({
+    target: wrapperRef,
+    offset: ['start start', 'end end'],
+  })
+
+  const [progress, setProgress] = useState(0)
+  
+  useMotionValueEvent(scrollYProgress, 'change', v => {
+    const newProgress = Math.max(0, v)
+    setProgress(newProgress)
+    
+    // Skip sound logic on mobile
+    if (isMobile) return
+
+    // Sound logic (original range 10% to 100%)
+    const inZone = newProgress >= 0.10 && newProgress < 1.0
+    
+    if (inZone) {
+      if (!inSoundZoneRef.current) {
+        inSoundZoneRef.current = true
+        playSound(0.12)
+      }
+    } else {
+      if (inSoundZoneRef.current) {
+        inSoundZoneRef.current = false
+        stopSound()
+      }
+    }
+  })
+
+  // Transiciones de opacidad
+  // El diagrama se desvanece a partir del 50%
+  const diagramOpacity = useTransform(scrollYProgress, [0.45, 0.55], [1, 0])
+  
+  // El VFX Hero aparece a partir del 48% (ligeramente antes para suavizar)
+  const vfxOpacity = useTransform(scrollYProgress, [0.50, 0.60], [0, 1])
+  
+  // Parallax para el SVG
+  const svgY = useTransform(scrollYProgress, [0, 1], ['10%', '-10%'])
+
+  return (
+    <section
+      ref={wrapperRef}
+      className="relative w-full"
+      aria-label="Scroll-driven diagram and VFX studio"
+    >
+      {/* ── Altura de scroll ── */}
+      <div style={{ height: '500vh' }}>
+        <div className="sticky top-0 h-screen overflow-hidden flex items-center justify-center bg-background">
+
+          {/* ── 1. Diagrama Minimalista (Capas base) ── */}
+          <motion.div 
+            className="absolute inset-0 flex items-center justify-center z-10"
+            style={{ opacity: diagramOpacity }}
+          >
+            {/* Ambient glow */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: isDark 
+                  ? 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(254,249,243,0.08) 0%, transparent 70%)'
+                  : 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,0,0,0.05) 0%, transparent 70%)',
+              }}
+            />
+
+            <motion.div
+              className="relative w-full max-w-3xl mx-auto px-4"
+              style={{ y: svgY }}
+            >
+              {/* Titular Diagrama */}
+              <motion.div
+                className="absolute -top-28 left-0 right-0 flex justify-center items-center gap-6"
+                animate={{ opacity: progress > 0.02 ? 1 : 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                <span className="w-8 h-px bg-foreground/40" />
+                <span className="text-sm font-medium tracking-widest uppercase font-sans text-foreground">Sistema Creativo Arnica</span>
+                <span className="w-8 h-px bg-foreground/40" />
+              </motion.div>
+
+              <svg
+                viewBox="0 0 1000 700"
+                className="w-full h-auto"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <defs>
+                  <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+                    <path d="M50 0L0 0 0 50" fill="none" stroke={isDark ? "rgba(254,249,243,0.03)" : "rgba(0,0,0,0.03)"} strokeWidth="1" />
+                  </pattern>
+                </defs>
+                <rect width="1000" height="700" fill="url(#grid)" />
+
+                {PATHS.map((p, i) => (
+                  <DrawnPath
+                    key={i}
+                    d={p.d}
+                    color={p.color}
+                    width={p.width}
+                    progress={progress}
+                    startAt={p.startAt}
+                    endAt={p.endAt}
+                  />
+                ))}
+
+                {PATHS.filter(p => p.label).map((p, i) => {
+                  const visible = progress >= p.endAt
+                  return (
+                    <text
+                      key={`label-${i}`}
+                      x={p.labelX}
+                      y={p.labelY}
+                      fill={colors.primary}
+                      fontSize="8"
+                      fontFamily="var(--font-mono, monospace)"
+                      letterSpacing="2"
+                      textAnchor="middle"
+                      opacity={visible ? 0.8 : 0}
+                      style={{ transition: 'opacity 0.4s ease' }}
+                    >
+                      {p.label}
+                    </text>
+                  )
+                })}
+
+                {NODES.map((n, i) => (
+                  <g key={i}>
+                    <circle
+                      cx={n.cx}
+                      cy={n.cy}
+                      r={n.r}
+                      fill={n.color}
+                      opacity={progress >= n.triggerAt ? 1 : 0}
+                      style={{ transition: 'opacity 0.3s ease, r 0.3s ease' }}
+                    />
+                  </g>
+                ))}
+
+                {progress > 0.35 && (
+                  <circle cx={500} cy={350} r={16} fill="none" stroke={colors.primary} strokeWidth="1" opacity="0.25">
+                    <animate attributeName="r" values="8;20;8" dur="2.4s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0.4;0;0.4" dur="2.4s" repeatCount="indefinite" />
+                  </circle>
+                )}
+              </svg>
+            </motion.div>
+          </motion.div>
+
+          {/* ── 2. ESTUDIO DE MÚSICA / VFX HERO (A partir del 50%) ── */}
+          <motion.div
+            className="absolute inset-0 z-20 pointer-events-none"
+            style={{ 
+              opacity: vfxOpacity,
+              pointerEvents: progress > 0.52 ? 'auto' : 'none'
+            }}
+          >
+            <iframe
+              src="/vfx-hero.html"
+              className="w-full h-full border-none"
+              title="Estudio de Música VFX"
+            />
+          </motion.div>
+
+          {/* Scroll indicators (Fade at 45%) */}
+          <motion.div
+            className="absolute bottom-12 left-1/2 -translate-x-1/2 z-30 pointer-events-none"
+            style={{ opacity: diagramOpacity }}
+          >
+             <div className="flex flex-col items-center gap-2">
+              <div className="w-32 h-px bg-border overflow-hidden">
+                <motion.div
+                  className="h-full bg-foreground"
+                  style={{ scaleX: progress, transformOrigin: 'left' }}
+                />
+              </div>
+              <span className="text-[9px] font-mono text-muted-foreground tracking-widest uppercase">
+                Carga Sistema: {Math.round(progress * 100)}%
+              </span>
+            </div>
+          </motion.div>
+
+        </div>
+      </div>
     </section>
   )
 }
