@@ -23,7 +23,7 @@ export function WhatsAppButton() {
         damping: 20,
         delay: 1 
       }}
-      className="fixed bottom-8 right-8 z-50 w-16 h-16 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-xl hover:shadow-2xl transition-shadow group"
+      className="fixed bottom-8 right-8 z-50 w-16 h-16 bg-[#DFFF00] text-black rounded-full flex items-center justify-center shadow-xl hover:shadow-2xl transition-shadow group"
       aria-label="Contactar por WhatsApp"
     >
       <MessageCircle size={32} fill="currentColor" className="relative z-10" />
@@ -34,7 +34,7 @@ export function WhatsAppButton() {
       </span>
 
       {/* Pulsing effect */}
-      <span className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-20" />
+      <span className="absolute inset-0 rounded-full bg-[#DFFF00] animate-ping opacity-20" />
     </motion.a>
   )
 }

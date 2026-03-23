@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils'
 
 const NAV_LINKS = [
   { 
-    label: 'Agencia', 
+    label: 'Agencia Audiovisual', 
     href: '/agencia',
     subItems: [
       { label: 'Artistas', href: '/artistas' }
