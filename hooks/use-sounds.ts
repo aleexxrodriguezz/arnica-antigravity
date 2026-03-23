@@ -34,7 +34,7 @@ export function useParallaxTechSound() {
       }
 
       if (!bufferRef.current) {
-        const response = await fetch('/audio/SonidoParallaxArnica.mp3')
+        const response = await fetch('/audio/SonidoParallaxArnica.mp3?v=1.1')
         const arrayBuffer = await response.arrayBuffer()
         bufferRef.current = await ctxRef.current.decodeAudioData(arrayBuffer)
       }
