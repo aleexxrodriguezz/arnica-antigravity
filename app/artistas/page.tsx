@@ -3,10 +3,14 @@
 import { PageShell } from '@/components/page-shell'
 import { FadeUp, MaskReveal, ParallaxLayer } from '@/components/parallax'
 import { ArrowUpRight, Instagram, Mail, Music2, Headphones, Disc } from 'lucide-react'
+import { useTheme } from '@/components/theme-provider'
 import Image from 'next/image'
 import Link from 'next/link'
 
 export default function ArtistasPage() {
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
+
   return (
     <PageShell>
       {/* Hero Section */}
@@ -60,7 +64,7 @@ export default function ArtistasPage() {
           <div className="flex flex-col items-center mb-24">
             <FadeUp>
               <Image
-                src="/logos/fb-logo-white.png"
+                src={isDark ? "/logos/fb-logo-white.png" : "/logos/fb-logo-black.png"}
                 alt="Fernando Ballesteros Logo"
                 width={400}
                 height={200}
@@ -156,7 +160,7 @@ export default function ArtistasPage() {
             <FadeUp delay={0.3}>
               <Link
                 href="mailto:hola@arnica.agency"
-                className="group flex items-center gap-3 px-8 py-4 bg-primary text-white hover:bg-primary/90 transition-colors uppercase text-xs tracking-widest font-bold"
+                className="group flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors uppercase text-xs tracking-widest font-bold"
               >
                 <Mail className="w-4 h-4" />
                 Bookings <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />

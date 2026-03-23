@@ -11,8 +11,13 @@ import { Sun, Moon, Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const NAV_LINKS = [
-  { label: 'Agencia',    href: '/agencia' },
-  { label: 'Artistas',   href: '/artistas' },
+  { 
+    label: 'Agencia', 
+    href: '/agencia',
+    subItems: [
+      { label: 'Artistas', href: '/artistas' }
+    ]
+  },
   { label: 'Atrezo/PLV', href: '/atrezo' },
   { label: 'Contáctanos',  href: '/contactanos' },
   { label: 'Producción', href: '/produccion' },
@@ -96,23 +101,43 @@ export function Navbar() {
         {/* Logo - switches based on theme */}
         <Link href="/" className="flex items-center group" aria-label="Arnica — Inicio">
           <Image
-            src={theme === 'dark' ? "/logos/fb-logo-white.png" : "/logos/fb-logo-black.png"}
-            alt="Fernando Ballesteros"
-            width={180}
-            height={60}
-            className="h-12 w-auto object-contain transition-opacity duration-300 group-hover:opacity-80"
+            src={theme === 'dark' 
+              ? 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Arnica_logo-8Uy5GvJpH77M7VC5hEz83NOZI2ZOqh.png'
+              : 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Arnica_logo_black-cQaFbk2rrt5lnksHDyYpSREWZ1AnkV.png'
+            }
+            alt="Arnica"
+            width={120}
+            height={48}
+            className="h-10 w-auto object-contain transition-opacity duration-300 group-hover:opacity-80"
             priority
           />
         </Link>
 
         <div className="hidden md:flex items-center gap-8">
           {NAV_LINKS.map(link => (
-            <GlitchLink
-              key={link.href}
-              label={link.label}
-              href={link.href}
-              active={pathname === link.href || (link.href === '/agencia' && pathname.startsWith('/agencia'))}
-            />
+            <div key={link.label} className="relative group/nav">
+              <GlitchLink
+                label={link.label}
+                href={link.href}
+                active={pathname === link.href || (link.href === '/agencia' && pathname.startsWith('/agencia'))}
+              />
+              
+              {link.subItems && (
+                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 invisible group-hover/nav:opacity-100 group-hover/nav:visible transition-all duration-300">
+                  <div className="bg-background border border-border shadow-2xl py-2 min-w-[140px] backdrop-blur-md">
+                    {link.subItems.map(sub => (
+                      <Link
+                        key={sub.href}
+                        href={sub.href}
+                        className="block px-4 py-3 text-[10px] tracking-[0.3em] uppercase hover:bg-primary/10 transition-colors text-foreground hover:text-primary whitespace-nowrap text-center font-semibold"
+                      >
+                        {sub.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           ))}
         </div>
 
@@ -152,17 +177,35 @@ export function Navbar() {
       {menuOpen && (
         <div className="md:hidden border-t border-border bg-background px-6 py-6 flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200">
           {NAV_LINKS.map(link => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setMenuOpen(false)}
-              className={cn(
-                'text-base font-medium tracking-widest uppercase transition-colors',
-                pathname === link.href ? 'text-primary' : 'text-foreground hover:text-primary'
+            <div key={link.href} className="flex flex-col gap-4">
+              <Link
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className={cn(
+                  'text-base font-medium tracking-widest uppercase transition-colors',
+                  pathname === link.href ? 'text-primary' : 'text-foreground hover:text-primary'
+                )}
+              >
+                {link.label}
+              </Link>
+              {link.subItems && (
+                <div className="pl-6 flex flex-col gap-4 border-l border-border">
+                  {link.subItems.map(sub => (
+                    <Link
+                      key={sub.href}
+                      href={sub.href}
+                      onClick={() => setMenuOpen(false)}
+                      className={cn(
+                        'text-sm font-medium tracking-widest uppercase transition-colors',
+                        pathname === sub.href ? 'text-primary' : 'text-muted-foreground hover:text-primary'
+                      )}
+                    >
+                      {sub.label}
+                    </Link>
+                  ))}
+                </div>
               )}
-            >
-              {link.label}
-            </Link>
+            </div>
           ))}
         </div>
       )}

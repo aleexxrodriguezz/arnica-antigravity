@@ -142,7 +142,7 @@ export default function MotionPage() {
           </div>
           <a
             href="mailto:hola@arnica.agency"
-            className="px-8 py-4 bg-primary text-white font-bold tracking-widest uppercase text-xs rounded-sm hover:bg-primary/90 transition-colors whitespace-nowrap"
+            className="px-8 py-4 bg-primary text-primary-foreground font-bold tracking-widest uppercase text-xs rounded-sm hover:bg-primary/90 transition-colors whitespace-nowrap"
           >
             Solicitar Proyecto
           </a>

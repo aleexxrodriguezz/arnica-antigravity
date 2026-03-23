@@ -201,7 +201,7 @@ export default function AtrezoPage() {
               />
               <button
                 type="submit"
-                className="px-6 py-3 bg-primary text-white font-bold text-xs tracking-widest uppercase rounded-sm hover:bg-primary/90 transition-colors whitespace-nowrap"
+                className="px-6 py-3 bg-primary text-primary-foreground font-bold text-xs tracking-widest uppercase rounded-sm hover:bg-primary/90 transition-colors whitespace-nowrap"
               >
                 Avisarme
               </button>

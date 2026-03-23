@@ -23,7 +23,10 @@ export function PageShell({ children }: { children: React.ReactNode }) {
           aria-hidden="true"
         >
           <img 
-            src={isDark ? "/logos/fb-logo-white.png" : "/logos/fb-logo-black.png"}
+            src={isDark 
+              ? 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Arnica_logo-8Uy5GvJpH77M7VC5hEz83NOZI2ZOqh.png'
+              : 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Arnica_logo_black-cQaFbk2rrt5lnksHDyYpSREWZ1AnkV.png'
+            }
             alt=""
             className="w-[60vw] max-w-[800px] h-auto"
             style={{

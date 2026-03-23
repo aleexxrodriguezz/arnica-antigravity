@@ -76,7 +76,7 @@ function ManifestoSection() {
 
   return (
     <section ref={ref} className="relative py-40 overflow-hidden" style={{ position: 'relative' }}>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none pointer-events-none font-bold leading-none dark:text-white/15 text-border/20" style={{ fontSize: 'clamp(12rem, 30vw, 28rem)', fontWeight: 700, whiteSpace: 'nowrap' }} aria-hidden>A</div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none pointer-events-none font-bold leading-none dark:text-white/10 text-foreground/5" style={{ fontSize: 'clamp(12rem, 30vw, 28rem)', fontWeight: 700, whiteSpace: 'nowrap' }} aria-hidden>A</div>
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           <div>
