@@ -6,7 +6,6 @@ import { PageShell } from '@/components/page-shell'
 import { FadeUp, MaskReveal, ScrollLine } from '@/components/parallax'
 import { ScrollDrawSection } from '@/components/scroll-draw'
 import { GlassCard } from '@/components/glass-card'
-import { RubikCubeSection } from '@/components/rubik-cube'
 import Link from 'next/link'
 import { ArrowRight, Radio, Music2, Film, Box, ShoppingBag, LayoutGrid, ArrowUpRight } from 'lucide-react'
 
@@ -277,7 +276,6 @@ export default function HomePage() {
       <TechStatement />
       <ProcessSection />
       <CtaSection />
-      <RubikCubeSection />
     </PageShell>
   )
 }
