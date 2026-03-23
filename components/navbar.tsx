@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils'
 
 const NAV_LINKS = [
   { label: 'Agencia',    href: '/agencia' },
-  { label: 'Artistas',   href: '/contactanos' },
+  { label: 'Artistas',   href: '/artistas' },
   { label: 'Atrezo/PLV', href: '/atrezo' },
   { label: 'Contáctanos',  href: '/contactanos' },
   { label: 'Producción', href: '/produccion' },
