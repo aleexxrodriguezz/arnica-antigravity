@@ -167,11 +167,11 @@ export function ScrollDrawSection() {
   })
 
   // Transiciones de opacidad
-  // El diagrama se desvanece a partir del 50%
-  const diagramOpacity = useTransform(scrollYProgress, [0.45, 0.55], [1, 0])
+  // El diagrama se desvanece al final del scroll (90% - 95%)
+  const diagramOpacity = useTransform(scrollYProgress, [0.90, 0.95], [1, 0])
   
-  // El VFX Hero aparece a partir del 48% (ligeramente antes para suavizar)
-  const vfxOpacity = useTransform(scrollYProgress, [0.50, 0.60], [0, 1])
+  // El VFX Hero aparece justo después (95% - 100%)
+  const vfxOpacity = useTransform(scrollYProgress, [0.95, 1.0], [0, 1])
   
   // Parallax para el SVG
   const svgY = useTransform(scrollYProgress, [0, 1], ['10%', '-10%'])
@@ -190,7 +190,7 @@ export function ScrollDrawSection() {
             className="absolute inset-0 z-10 flex items-center justify-center p-4"
             style={{ 
               opacity: diagramOpacity,
-              pointerEvents: progress < 0.5 ? 'auto' : 'none'
+              pointerEvents: progress < 0.95 ? 'auto' : 'none'
             }}
           >
             {/* Ambient glow */}
@@ -278,7 +278,7 @@ export function ScrollDrawSection() {
             className="absolute inset-0 z-20 w-full h-full"
             style={{ 
               opacity: vfxOpacity,
-              pointerEvents: progress > 0.5 ? 'auto' : 'none'
+              pointerEvents: progress > 0.97 ? 'auto' : 'none'
             }}
           >
             <iframe
