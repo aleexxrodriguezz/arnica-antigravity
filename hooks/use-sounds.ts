@@ -130,9 +130,6 @@ export function useParallaxTechSound() {
   return { play, stop, initContext }
 }
 
-  return { play, stop, initContext }
-}
-
 export function useHoverNavSound() {
   const ctxRef = useRef<AudioContext | null>(null)
 
