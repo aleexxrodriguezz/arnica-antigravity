@@ -16,6 +16,7 @@ export function useParallaxTechSound() {
   const ctxRef = useRef<AudioContext | null>(null)
   const masterRef = useRef<GainNode | null>(null)
   const oscsRef = useRef<OscillatorNode[]>([])
+  const timerRef = useRef<any>(null)
 
   const initContext = useCallback(() => {
     if (ctxRef.current) return
@@ -31,61 +32,61 @@ export function useParallaxTechSound() {
       master.gain.setValueAtTime(0, ctx.currentTime)
       master.connect(ctx.destination)
       masterRef.current = master
-
-      const now = ctx.currentTime
-      
-      // ═══════════════════════════════════════════════════════════
-      // 8-BIT LOADING SOUND ENGINE
-      // ═══════════════════════════════════════════════════════════
-      
-      // OSC 1: Rapid Arpeggio (Pulse Wave style)
-      const pulse = ctx.createOscillator()
-      const pulseGain = ctx.createGain()
-      pulse.type = 'square'
-      pulse.frequency.setValueAtTime(440, now)
-      
-      // Create a sequence of frequencies for that "loading" feel
-      const freqs = [440, 880, 554, 659, 330, 987, 1318]
-      for (let i = 0; i < 20; i++) {
-        pulse.frequency.setValueAtTime(freqs[i % freqs.length], now + i * 0.1)
-      }
-      
-      pulseGain.gain.setValueAtTime(0.05, now)
-      pulse.connect(pulseGain)
-      pulseGain.connect(master)
-      pulse.start()
-      oscsRef.current.push(pulse)
-
-      // OSC 2: High bit-chirp
-      const chirp = ctx.createOscillator()
-      const chirpGain = ctx.createGain()
-      chirp.type = 'square'
-      chirp.frequency.setValueAtTime(2000, now)
-      
-      for (let i = 0; i < 40; i++) {
-        chirp.frequency.setValueAtTime(Math.random() * 3000 + 1000, now + i * 0.05)
-      }
-      
-      chirpGain.gain.setValueAtTime(0.02, now)
-      chirp.connect(chirpGain)
-      chirpGain.connect(master)
-      chirp.start()
-      oscsRef.current.push(chirp)
-
-      // LFO: Fast Volume gating for "stutter" effect
-      const lfo = ctx.createOscillator()
-      const lfoGain = ctx.createGain()
-      lfo.type = 'square'
-      lfo.frequency.setValueAtTime(12, now) // 12Hz stutter
-      lfoGain.gain.setValueAtTime(0.03, now)
-      lfo.connect(lfoGain)
-      lfoGain.connect(master.gain)
-      lfo.start()
-      oscsRef.current.push(lfo)
-
     } catch {
       // Audio not supported
     }
+  }, [])
+
+  const play8BitSequence = useCallback(() => {
+    if (!ctxRef.current || !masterRef.current) return
+
+    const ctx = ctxRef.current
+    const master = masterRef.current
+    const now = ctx.currentTime
+
+    // Clear previous oscillators if any
+    oscsRef.current.forEach(osc => {
+      try { osc.stop(); osc.disconnect(); } catch(e) {}
+    })
+    oscsRef.current = []
+
+    // ── OSC 1: The Main 8-bit Arpeggiator ──
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.type = 'square'
+    
+    // Fast frequency shifts
+    const freqs = [440, 880, 554, 1318, 659, 330, 1760, 220]
+    let time = now
+    for (let i = 0; i < 50; i++) {
+      const f = freqs[Math.floor(Math.random() * freqs.length)]
+      osc.frequency.setValueAtTime(f, time)
+      time += 0.05 + Math.random() * 0.1 // Random rhythm
+    }
+    
+    gain.gain.setValueAtTime(0.04, now)
+    osc.connect(gain)
+    gain.connect(master)
+    osc.start(now)
+    osc.stop(now + 3) // Sequence lasts 3s
+    oscsRef.current.push(osc)
+
+    // ── OSC 2: Sub-noise / Digital Static ──
+    const noise = ctx.createOscillator()
+    const nGain = ctx.createGain()
+    noise.type = 'square'
+    for (let i = 0; i < 100; i++) {
+       noise.frequency.setValueAtTime(Math.random() * 100 + 40, now + i * 0.03)
+    }
+    nGain.gain.setValueAtTime(0.02, now)
+    noise.connect(nGain)
+    nGain.connect(master)
+    noise.start(now)
+    noise.stop(now + 3)
+    oscsRef.current.push(noise)
+
+    // Loop the sequence every 2.8s to keep it seamless
+    timerRef.current = setTimeout(play8BitSequence, 2800)
   }, [])
 
   const play = useCallback((volume: number) => {
@@ -99,8 +100,12 @@ export function useParallaxTechSound() {
     const now = ctxRef.current.currentTime
     masterRef.current.gain.cancelScheduledValues(now)
     masterRef.current.gain.setValueAtTime(masterRef.current.gain.value, now)
-    masterRef.current.gain.linearRampToValueAtTime(volume, now + 0.6)
-  }, [initContext])
+    masterRef.current.gain.linearRampToValueAtTime(volume * 1.5, now + 0.3) // Slightly louder
+
+    if (!timerRef.current) {
+      play8BitSequence()
+    }
+  }, [initContext, play8BitSequence])
 
   const stop = useCallback(() => {
     if (!ctxRef.current || !masterRef.current) return
@@ -108,8 +113,22 @@ export function useParallaxTechSound() {
     const now = ctxRef.current.currentTime
     masterRef.current.gain.cancelScheduledValues(now)
     masterRef.current.gain.setValueAtTime(masterRef.current.gain.value, now)
-    masterRef.current.gain.linearRampToValueAtTime(0, now + 0.8)
+    masterRef.current.gain.linearRampToValueAtTime(0, now + 0.4)
+
+    if (timerRef.current) {
+      clearTimeout(timerRef.current)
+      timerRef.current = null
+    }
   }, [])
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current)
+    }
+  }, [])
+
+  return { play, stop, initContext }
+}
 
   return { play, stop, initContext }
 }
