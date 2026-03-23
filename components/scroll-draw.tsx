@@ -182,14 +182,16 @@ export function ScrollDrawSection() {
       className="relative w-full"
       aria-label="Scroll-driven diagram and VFX studio"
     >
-      {/* ── Altura de scroll ── */}
       <div style={{ height: '500vh' }}>
-        <div className="sticky top-0 h-screen overflow-hidden flex items-center justify-center bg-background">
+        <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#05050a]">
 
-          {/* ── 1. Diagrama Minimalista (Capas base) ── */}
+          {/* ── 1. Diagrama Minimalista ── */}
           <motion.div 
-            className="absolute inset-0 flex items-center justify-center z-10"
-            style={{ opacity: diagramOpacity }}
+            className="absolute inset-0 z-10 flex items-center justify-center p-4"
+            style={{ 
+              opacity: diagramOpacity,
+              pointerEvents: progress < 0.5 ? 'auto' : 'none'
+            }}
           >
             {/* Ambient glow */}
             <div
@@ -202,23 +204,22 @@ export function ScrollDrawSection() {
             />
 
             <motion.div
-              className="relative w-full max-w-3xl mx-auto px-4"
+              className="relative w-full max-w-4xl mx-auto"
               style={{ y: svgY }}
             >
-              {/* Titular Diagrama */}
               <motion.div
-                className="absolute -top-28 left-0 right-0 flex justify-center items-center gap-6"
+                className="absolute -top-20 left-0 right-0 flex justify-center items-center gap-6"
                 animate={{ opacity: progress > 0.02 ? 1 : 0 }}
                 transition={{ duration: 0.6 }}
               >
                 <span className="w-8 h-px bg-foreground/40" />
-                <span className="text-sm font-medium tracking-widest uppercase font-sans text-foreground">Sistema Creativo Arnica</span>
+                <span className="text-xs font-bold tracking-[0.2em] uppercase text-foreground/80">Sistema Creativo Arnica</span>
                 <span className="w-8 h-px bg-foreground/40" />
               </motion.div>
 
               <svg
                 viewBox="0 0 1000 700"
-                className="w-full h-auto"
+                className="w-full h-auto drop-shadow-2xl"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <defs>
@@ -240,82 +241,69 @@ export function ScrollDrawSection() {
                   />
                 ))}
 
-                {PATHS.filter(p => p.label).map((p, i) => {
-                  const visible = progress >= p.endAt
-                  return (
-                    <text
-                      key={`label-${i}`}
-                      x={p.labelX}
-                      y={p.labelY}
-                      fill={colors.primary}
-                      fontSize="8"
-                      fontFamily="var(--font-mono, monospace)"
-                      letterSpacing="2"
-                      textAnchor="middle"
-                      opacity={visible ? 0.8 : 0}
-                      style={{ transition: 'opacity 0.4s ease' }}
-                    >
-                      {p.label}
-                    </text>
-                  )
-                })}
-
-                {NODES.map((n, i) => (
-                  <g key={i}>
-                    <circle
-                      cx={n.cx}
-                      cy={n.cy}
-                      r={n.r}
-                      fill={n.color}
-                      opacity={progress >= n.triggerAt ? 1 : 0}
-                      style={{ transition: 'opacity 0.3s ease, r 0.3s ease' }}
-                    />
-                  </g>
+                {PATHS.filter(p => p.label).map((p, i) => (
+                  <text
+                    key={`label-${i}`}
+                    x={p.labelX}
+                    y={p.labelY}
+                    fill={colors.primary}
+                    fontSize="8"
+                    fontFamily="monospace"
+                    letterSpacing="2"
+                    textAnchor="middle"
+                    opacity={progress >= p.endAt ? 0.8 : 0}
+                    style={{ transition: 'opacity 0.4s ease' }}
+                  >
+                    {p.label}
+                  </text>
                 ))}
 
-                {progress > 0.35 && (
-                  <circle cx={500} cy={350} r={16} fill="none" stroke={colors.primary} strokeWidth="1" opacity="0.25">
-                    <animate attributeName="r" values="8;20;8" dur="2.4s" repeatCount="indefinite" />
-                    <animate attributeName="opacity" values="0.4;0;0.4" dur="2.4s" repeatCount="indefinite" />
-                  </circle>
-                )}
+                {NODES.map((n, i) => (
+                  <circle
+                    key={i}
+                    cx={n.cx}
+                    cy={n.cy}
+                    r={n.r}
+                    fill={n.color}
+                    opacity={progress >= n.triggerAt ? 1 : 0}
+                    style={{ transition: 'opacity 0.3s ease' }}
+                  />
+                ))}
               </svg>
             </motion.div>
           </motion.div>
 
-          {/* ── 2. ESTUDIO DE MÚSICA / VFX HERO (A partir del 50%) ── */}
+          {/* ── 2. ESTUDIO DE MÚSICA / VFX HERO ── */}
           <motion.div
-            className="absolute inset-0 z-20 pointer-events-none"
+            className="absolute inset-0 z-20 w-full h-full"
             style={{ 
               opacity: vfxOpacity,
-              pointerEvents: progress > 0.52 ? 'auto' : 'none'
+              pointerEvents: progress > 0.5 ? 'auto' : 'none'
             }}
           >
             <iframe
               src="/vfx-hero.html"
               className="w-full h-full border-none"
               title="Estudio de Música VFX"
+              loading="lazy"
             />
           </motion.div>
 
-          {/* Scroll indicators (Fade at 45%) */}
+          {/* Progress Indicator */}
           <motion.div
-            className="absolute bottom-12 left-1/2 -translate-x-1/2 z-30 pointer-events-none"
+            className="absolute bottom-12 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-2 pointer-events-none"
             style={{ opacity: diagramOpacity }}
           >
-             <div className="flex flex-col items-center gap-2">
-              <div className="w-32 h-px bg-border overflow-hidden">
-                <motion.div
-                  className="h-full bg-foreground"
-                  style={{ scaleX: progress, transformOrigin: 'left' }}
-                />
-              </div>
-              <span className="text-[9px] font-mono text-muted-foreground tracking-widest uppercase">
-                Carga Sistema: {Math.round(progress * 100)}%
-              </span>
+            <div className="w-48 h-[2px] bg-white/10 rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-primary"
+                style={{ scaleX: progress, transformOrigin: 'left' }}
+              />
             </div>
+            <span className="text-[10px] font-bold tracking-widest uppercase opacity-60">
+              SISTEMA CARGANDO: {Math.round(progress * 100)}%
+            </span>
           </motion.div>
-
         </div>
       </div>
     </section>
