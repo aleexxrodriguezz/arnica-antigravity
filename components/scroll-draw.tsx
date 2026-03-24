@@ -174,13 +174,31 @@ export function ScrollDrawSection() {
   return (
     <section
       ref={wrapperRef}
-      className="relative w-full"
+      className={`relative w-full ${isDark ? 'bg-[#05050a]' : 'bg-white'}`}
       aria-label="Scroll-driven technical diagram"
     >
       <div style={{ height: '400vh' }}>
-        <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#05050a] flex items-center justify-center">
+        <div className={`sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center ${isDark ? 'bg-[#05050a]' : 'bg-white'}`}>
 
-          {/* 1. Diagrama Minimalista */}
+          {/* 1. Logo Arnica (Inicio) */}
+          <motion.div
+            className="absolute top-24 left-1/2 -translate-x-1/2 z-40"
+            style={{ 
+              opacity: useTransform(scrollYProgress, [0, 0.15], [1, 0]),
+              scale: useTransform(scrollYProgress, [0, 0.15], [1, 0.9])
+            }}
+          >
+            <img 
+              src={isDark 
+                ? 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Arnica_logo-8Uy5GvJpH77M7VC5hEz83NOZI2ZOqh.png'
+                : 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Arnica_logo_black-cQaFbk2rrt5lnksHDyYpSREWZ1AnkV.png'
+              }
+              alt="Arnica Logo"
+              className="w-48 md:w-64 h-auto"
+            />
+          </motion.div>
+
+          {/* 2. Diagrama Minimalista */}
           <motion.div 
             className="relative w-full max-w-4xl mx-auto p-4"
             style={{ 
@@ -192,7 +210,9 @@ export function ScrollDrawSection() {
             <div
               className="absolute inset-0 pointer-events-none"
               style={{
-                background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(254,249,243,0.08) 0%, transparent 70%)',
+                background: isDark 
+                  ? 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(254,249,243,0.08) 0%, transparent 70%)'
+                  : 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,0,0,0.04) 0%, transparent 70%)',
               }}
             />
 
@@ -201,9 +221,9 @@ export function ScrollDrawSection() {
                 className="absolute -top-20 left-0 right-0 flex justify-center items-center gap-6"
                 style={{ opacity: currentProgress > 0.02 ? 1 : 0 }}
               >
-                <span className="w-8 h-px bg-foreground/40" />
-                <span className="text-xs font-bold tracking-[0.2em] uppercase text-foreground/80">Sistema Creativo Arnica</span>
-                <span className="w-8 h-px bg-foreground/40" />
+                <span className={`w-8 h-px ${isDark ? 'bg-white/40' : 'bg-black/20'}`} />
+                <span className={`text-xs font-bold tracking-[0.2em] uppercase ${isDark ? 'text-white/80' : 'text-black/60'}`}>Sistema Creativo Arnica</span>
+                <span className={`w-8 h-px ${isDark ? 'bg-white/40' : 'bg-black/20'}`} />
               </motion.div>
 
               <svg
@@ -213,7 +233,7 @@ export function ScrollDrawSection() {
               >
                 <defs>
                   <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
-                    <path d="M50 0L0 0 0 50" fill="none" stroke="rgba(254,249,243,0.03)" strokeWidth="1" />
+                    <path d="M50 0L0 0 0 50" fill="none" stroke={isDark ? "rgba(254,249,243,0.03)" : "rgba(0,0,0,0.05)"} strokeWidth="1" />
                   </pattern>
                 </defs>
                 <rect width="1000" height="700" fill="url(#grid)" />
@@ -267,13 +287,13 @@ export function ScrollDrawSection() {
             className="absolute bottom-12 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-2 pointer-events-none"
             style={{ opacity: diagramOpacity }}
           >
-            <div className="w-48 h-[2px] bg-white/10 rounded-full overflow-hidden">
+            <div className={`w-48 h-[2px] ${isDark ? 'bg-white/10' : 'bg-black/10'} rounded-full overflow-hidden`}>
               <motion.div
-                className="h-full bg-primary"
+                className={`h-full ${isDark ? 'bg-primary' : 'bg-black'}`}
                 style={{ scaleX: currentProgress, transformOrigin: 'left' }}
               />
             </div>
-            <span className="text-[10px] font-bold tracking-widest uppercase opacity-60">
+            <span className={`text-[10px] font-bold tracking-widest uppercase ${isDark ? 'opacity-60 text-white' : 'opacity-40 text-black'}`}>
               SISTEMA CARGANDO: {Math.round(currentProgress * 100)}%
             </span>
           </motion.div>
