@@ -1,23 +1,15 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { useTheme } from '@/components/theme-provider'
-
 export function VFXHubSection() {
-  const { theme } = useTheme()
-  const isDark = theme === 'dark'
-
   return (
-    <section 
-      className="relative w-full h-screen z-50 border-t bg-[#fef9f3] dark:bg-[#000000] border-black/5 dark:border-white/5" 
-      id="vfx-hub"
-    >
-      <iframe
-        src="/vfx-hero.html"
-        className="w-full h-full border-none"
-        title="Estudio de Música VFX"
-        loading="lazy"
-      />
+    <section className="relative w-full pb-32 pt-8 bg-[#fef9f3] dark:bg-[#000000] z-20 overflow-hidden">
+      <div className="w-full max-w-5xl mx-auto h-[80vh] min-h-[600px] relative rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] ring-1 ring-black/5 dark:ring-white/10">
+        <iframe
+          src="/vfx-hero.html"
+          className="w-full h-full absolute inset-0 border-none bg-transparent"
+          title="Estudio de Música VFX"
+        />
+      </div>
     </section>
   )
 }

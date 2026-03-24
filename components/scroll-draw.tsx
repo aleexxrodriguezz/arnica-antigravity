@@ -141,39 +141,36 @@ export function ScrollDrawSection() {
     offset: ['start start', 'end end'],
   })
 
-  // Mapeamos el progreso para que empiece al 7% al inicio de la página y progrese hasta el 100%
-  const progress = useTransform(scrollYProgress, [0, 0.90], [0.07, 1], { clamp: true })
+  // 0.0 a 0.55: Dibuja el SVG (agilidad al 50% pero no instantáneo)
+  const progress = useTransform(scrollYProgress, [0, 0.55], [0.07, 1], { clamp: true })
   const [currentProgress, setCurrentProgress] = useState(0.07)
+  
+  // Transición directa mediante Framer Motion:
+  const diagramOpacity = useTransform(scrollYProgress, [0.55, 0.65], [1, 0], { clamp: true })
+  const svgPointerEvents = useTransform(scrollYProgress, v => v >= 0.65 ? 'none' : 'auto')
   
   useMotionValueEvent(progress, 'change', v => {
     setCurrentProgress(v)
   })
 
   useMotionValueEvent(scrollYProgress, 'change', v => {
-    // Sound logic: Start at roughly where the transform starts and end at the total completion
-    // scrollYProgress 0 is when technical diagram starts at 7%
-    // scrollYProgress 0.90+ is when it reaches 100%
-    if (isMobile) return
-
-    const inZone = v > 0.001 && v < 0.99
-    
-    if (inZone) {
-      if (!inSoundZoneRef.current) {
-        inSoundZoneRef.current = true
-        playSound(0.12)
-      }
-    } else {
-      if (inSoundZoneRef.current) {
-        inSoundZoneRef.current = false
-        stopSound()
+    if (!isMobile) {
+      const inZone = v > 0.001 && v < 0.55
+      if (inZone) {
+        if (!inSoundZoneRef.current) {
+          inSoundZoneRef.current = true
+          playSound(0.12)
+        }
+      } else {
+        if (inSoundZoneRef.current) {
+          inSoundZoneRef.current = false
+          stopSound()
+        }
       }
     }
   })
 
-  // El diagrama se desvanece y da paso al editor (85% - 95%)
-  const diagramOpacity = useTransform(scrollYProgress, [0.85, 0.95], [1, 0], { clamp: true })
-  const editorOpacity = useTransform(scrollYProgress, [0.85, 0.95], [0, 1], { clamp: true })
-  const iframePointerEvents = useTransform(scrollYProgress, (v) => v > 0.90 ? 'auto' : 'none')
+  // Un ligero parallax vertical extra
   const svgY = useTransform(scrollYProgress, [0, 1], ['5%', '-5%'])
 
   return (
@@ -182,7 +179,7 @@ export function ScrollDrawSection() {
       className="relative w-full bg-[#fef9f3] dark:bg-[#000000]"
       aria-label="Scroll-driven technical diagram"
     >
-      <div style={{ height: '200vh' }}>
+      <div style={{ height: '220vh' }}>
         <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-[#fef9f3] dark:bg-[#000000]">
 
           {/* 0. Logo de Fondo (Marca de Agua) - Sincronizado con PageShell */}
@@ -208,21 +205,14 @@ export function ScrollDrawSection() {
             className="relative w-full max-w-4xl mx-auto p-4 z-10"
             style={{ y: svgY }}
           >
-            {/* Iframe del Editor (Aparece al final del scroll) */}
+            {/* Diagrama SVG (Desaparece al final del scroll y deja de estorbar) */}
             <motion.div 
-              className="absolute inset-4 z-20 flex items-center justify-center"
-              style={{ opacity: editorOpacity, pointerEvents: iframePointerEvents as any }}
+              style={{ 
+                opacity: diagramOpacity, 
+                pointerEvents: svgPointerEvents 
+              }}
+              className="relative z-10"
             >
-              <iframe
-                src="/vfx-hero.html"
-                className="w-full h-full aspect-[10/7] border-none rounded-xl"
-                title="Estudio de Música VFX"
-                loading="lazy"
-              />
-            </motion.div>
-
-            {/* Diagrama SVG (Desaparece al final del scroll) */}
-            <motion.div style={{ opacity: diagramOpacity }}>
               {/* Ambient glow */}
               <div
                 className={`absolute inset-0 pointer-events-none ${isDark ? 'opacity-100' : 'opacity-40'}`}
@@ -238,72 +228,72 @@ export function ScrollDrawSection() {
                   className="absolute -top-20 left-0 right-0 flex justify-center items-center gap-6"
                   style={{ opacity: currentProgress > 0.02 ? 1 : 0 }}
                 >
-                <span className="w-8 h-px bg-black/20 dark:bg-white/40" />
-                <span className="text-xs font-bold tracking-[0.2em] uppercase text-black dark:text-white/80">Sistema Creativo Arnica</span>
-                <span className="w-8 h-px bg-black/20 dark:bg-white/40" />
+                  <span className="w-8 h-px bg-black/20 dark:bg-white/40" />
+                  <span className="text-xs font-bold tracking-[0.2em] uppercase text-black dark:text-white/80">Sistema Creativo Arnica</span>
+                  <span className="w-8 h-px bg-black/20 dark:bg-white/40" />
+                </motion.div>
+
+                <svg
+                  viewBox="0 0 1000 700"
+                  className="w-full h-auto drop-shadow-2xl"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <defs>
+                    <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+                      <path d="M50 0L0 0 0 50" fill="none" stroke={isDark ? "rgba(254,249,243,0.03)" : "rgba(0,0,0,0.05)"} strokeWidth="1" />
+                    </pattern>
+                  </defs>
+                  <rect width="1000" height="700" fill="url(#grid)" />
+
+                  {PATHS.map((p, i) => (
+                    <DrawnPath
+                      key={i}
+                      d={p.d}
+                      color={p.color}
+                      width={p.width}
+                      progress={currentProgress}
+                      startAt={p.startAt}
+                      endAt={p.endAt}
+                    />
+                  ))}
+
+                  {PATHS.filter(p => p.label).map((p, i) => (
+                    <text
+                      key={`label-${i}`}
+                      x={p.labelX}
+                      y={p.labelY}
+                      fill={colors.primary}
+                      fontSize="8"
+                      fontFamily="monospace"
+                      letterSpacing="2"
+                      textAnchor="middle"
+                      opacity={currentProgress >= p.endAt ? 0.8 : 0}
+                      style={{ transition: 'opacity 0.4s ease' }}
+                    >
+                      {p.label}
+                    </text>
+                  ))}
+
+                  {NODES.map((n, i) => (
+                    <circle
+                      key={i}
+                      cx={n.cx}
+                      cy={n.cy}
+                      r={n.r}
+                      fill={n.color}
+                      opacity={currentProgress >= n.triggerAt ? 1 : 0}
+                      style={{ transition: 'opacity 0.3s ease' }}
+                    />
+                  ))}
+                </svg>
               </motion.div>
-
-              <svg
-                viewBox="0 0 1000 700"
-                className="w-full h-auto drop-shadow-2xl"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <defs>
-                  <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
-                    <path d="M50 0L0 0 0 50" fill="none" stroke={isDark ? "rgba(254,249,243,0.03)" : "rgba(0,0,0,0.05)"} strokeWidth="1" />
-                  </pattern>
-                </defs>
-                <rect width="1000" height="700" fill="url(#grid)" />
-
-                {PATHS.map((p, i) => (
-                  <DrawnPath
-                    key={i}
-                    d={p.d}
-                    color={p.color}
-                    width={p.width}
-                    progress={currentProgress}
-                    startAt={p.startAt}
-                    endAt={p.endAt}
-                  />
-                ))}
-
-                {PATHS.filter(p => p.label).map((p, i) => (
-                  <text
-                    key={`label-${i}`}
-                    x={p.labelX}
-                    y={p.labelY}
-                    fill={colors.primary}
-                    fontSize="8"
-                    fontFamily="monospace"
-                    letterSpacing="2"
-                    textAnchor="middle"
-                    opacity={currentProgress >= p.endAt ? 0.8 : 0}
-                    style={{ transition: 'opacity 0.4s ease' }}
-                  >
-                    {p.label}
-                  </text>
-                ))}
-
-                {NODES.map((n, i) => (
-                  <circle
-                    key={i}
-                    cx={n.cx}
-                    cy={n.cy}
-                    r={n.r}
-                    fill={n.color}
-                    opacity={currentProgress >= n.triggerAt ? 1 : 0}
-                    style={{ transition: 'opacity 0.3s ease' }}
-                  />
-                ))}
-              </svg>
-            </motion.div>
             </motion.div>
           </motion.div>
 
-          {/* Progress Indicator */}
+          {/* Progress Indicator (Desaparece con el SVG) */}
           <motion.div
-            className="absolute bottom-12 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-2 pointer-events-none"
-            style={{ opacity: diagramOpacity }}
+            className="absolute bottom-12 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-2"
+            style={{ opacity: diagramOpacity, pointerEvents: 'none' }}
           >
             <div className="w-48 h-[2px] bg-black/10 dark:bg-white/10 rounded-full overflow-hidden">
               <motion.div
