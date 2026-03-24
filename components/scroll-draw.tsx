@@ -170,8 +170,10 @@ export function ScrollDrawSection() {
     }
   })
 
-  // El diagrama se desvanece al final de su tramo (95% - 100%)
-  const diagramOpacity = useTransform(scrollYProgress, [0.95, 1.0], [1, 0], { clamp: true })
+  // El diagrama se desvanece y da paso al editor (85% - 95%)
+  const diagramOpacity = useTransform(scrollYProgress, [0.85, 0.95], [1, 0], { clamp: true })
+  const editorOpacity = useTransform(scrollYProgress, [0.85, 0.95], [0, 1], { clamp: true })
+  const iframePointerEvents = useTransform(scrollYProgress, (v) => v > 0.90 ? 'auto' : 'none')
   const svgY = useTransform(scrollYProgress, [0, 1], ['5%', '-5%'])
 
   return (
@@ -180,7 +182,7 @@ export function ScrollDrawSection() {
       className="relative w-full bg-[#fef9f3] dark:bg-[#000000]"
       aria-label="Scroll-driven technical diagram"
     >
-      <div style={{ height: '400vh' }}>
+      <div style={{ height: '200vh' }}>
         <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-[#fef9f3] dark:bg-[#000000]">
 
           {/* 0. Logo de Fondo (Marca de Agua) - Sincronizado con PageShell */}
@@ -201,29 +203,41 @@ export function ScrollDrawSection() {
             />
           </motion.div>
 
-          {/* 1. Diagrama Minimalista */}
+          {/* 1. Contenedor Compartido */}
           <motion.div 
             className="relative w-full max-w-4xl mx-auto p-4 z-10"
-            style={{ 
-              opacity: diagramOpacity,
-              y: svgY
-            }}
+            style={{ y: svgY }}
           >
-            {/* Ambient glow */}
-            <div
-              className={`absolute inset-0 pointer-events-none ${isDark ? 'opacity-100' : 'opacity-40'}`}
-              style={{
-                background: isDark 
-                  ? 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(254,249,243,0.08) 0%, transparent 70%)'
-                  : 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,0,0,0.04) 0%, transparent 70%)',
-              }}
-            />
+            {/* Iframe del Editor (Aparece al final del scroll) */}
+            <motion.div 
+              className="absolute inset-4 z-20 flex items-center justify-center"
+              style={{ opacity: editorOpacity, pointerEvents: iframePointerEvents as any }}
+            >
+              <iframe
+                src="/vfx-hero.html"
+                className="w-full h-full aspect-[10/7] border-none rounded-xl"
+                title="Estudio de Música VFX"
+                loading="lazy"
+              />
+            </motion.div>
 
-            <motion.div className="relative">
-              <motion.div
-                className="absolute -top-20 left-0 right-0 flex justify-center items-center gap-6"
-                style={{ opacity: currentProgress > 0.02 ? 1 : 0 }}
-              >
+            {/* Diagrama SVG (Desaparece al final del scroll) */}
+            <motion.div style={{ opacity: diagramOpacity }}>
+              {/* Ambient glow */}
+              <div
+                className={`absolute inset-0 pointer-events-none ${isDark ? 'opacity-100' : 'opacity-40'}`}
+                style={{
+                  background: isDark 
+                    ? 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(254,249,243,0.08) 0%, transparent 70%)'
+                    : 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,0,0,0.04) 0%, transparent 70%)',
+                }}
+              />
+
+              <motion.div className="relative">
+                <motion.div
+                  className="absolute -top-20 left-0 right-0 flex justify-center items-center gap-6"
+                  style={{ opacity: currentProgress > 0.02 ? 1 : 0 }}
+                >
                 <span className="w-8 h-px bg-black/20 dark:bg-white/40" />
                 <span className="text-xs font-bold tracking-[0.2em] uppercase text-black dark:text-white/80">Sistema Creativo Arnica</span>
                 <span className="w-8 h-px bg-black/20 dark:bg-white/40" />
@@ -282,6 +296,7 @@ export function ScrollDrawSection() {
                   />
                 ))}
               </svg>
+            </motion.div>
             </motion.div>
           </motion.div>
 

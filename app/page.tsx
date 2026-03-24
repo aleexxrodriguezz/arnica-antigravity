@@ -5,7 +5,6 @@ import { motion, useScroll, useTransform, useInView } from 'framer-motion'
 import { PageShell } from '@/components/page-shell'
 import { FadeUp, MaskReveal, ScrollLine } from '@/components/parallax'
 import { ScrollDrawSection } from '@/components/scroll-draw'
-import { VFXHubSection } from '@/components/vfx-hub'
 import { GlassCard } from '@/components/glass-card'
 import { RubikCubeSection } from '@/components/rubik-cube'
 import Link from 'next/link'
@@ -250,8 +249,7 @@ function CtaSection() {
 export default function HomePage() {
   return (
   <PageShell>
-  <ScrollDrawSection />
-      <VFXHubSection />
+      <ScrollDrawSection />
       <ManifestoSection />
       <ServicesSection />
       <StatsSection />
