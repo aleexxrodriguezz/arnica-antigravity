@@ -141,25 +141,18 @@ export function ScrollDrawSection() {
     offset: ['start start', 'end end'],
   })
 
-  // Mapeamos el progreso para que empiece al 30% del scroll de la sección (aprox 12% del total de la página)
-  const progress = useTransform(scrollYProgress, [0.30, 0.90], [0, 1], { clamp: true })
-  const [currentProgress, setCurrentProgress] = useState(0)
+  // Mapeamos el progreso para que empiece al 7% al inicio de la página y progrese hasta el 100%
+  const progress = useTransform(scrollYProgress, [0, 0.90], [0.07, 1], { clamp: true })
+  const [currentProgress, setCurrentProgress] = useState(0.07)
   
   useMotionValueEvent(progress, 'change', v => {
-    // Aseguramos que el progreso sea estrictamente 0 hasta superar el umbral del 30%
-    const clampedV = v < 0.01 ? 0 : v
-    setCurrentProgress(clampedV)
-    
-    // Exponemos para depuración
-    if (typeof window !== 'undefined') {
-      (window as any).parallaxProgress = clampedV
-    }
+    setCurrentProgress(v)
     
     // Skip sound logic on mobile
     if (isMobile) return
 
     // Sound logic
-    const inZone = clampedV > 0 && clampedV < 1.0
+    const inZone = v > 0 && v < 1.0
     
     if (inZone) {
       if (!inSoundZoneRef.current) {
