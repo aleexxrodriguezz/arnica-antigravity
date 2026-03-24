@@ -174,37 +174,34 @@ export function ScrollDrawSection() {
   return (
     <section
       ref={wrapperRef}
-      className="relative w-full bg-white dark:bg-[#05050a]"
+      className="relative w-full bg-white dark:bg-[#000000]"
       aria-label="Scroll-driven technical diagram"
     >
       <div style={{ height: '400vh' }}>
-        <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-white dark:bg-[#05050a]">
+        <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-white dark:bg-[#000000]">
 
-          {/* 1. Logo Arnica (Inicio) - Clases dark: para visibilidad robusta */}
+          {/* 0. Logo de Fondo (Marca de Agua) - Estilo solicitado por el usuario */}
           <motion.div
-            className="absolute top-24 left-1/2 -translate-x-1/2 z-40"
+            className="absolute inset-0 flex items-center justify-center pointer-events-none z-0"
             style={{ 
-              opacity: useTransform(scrollYProgress, [0, 0.15], [1, 0]),
-              scale: useTransform(scrollYProgress, [0, 0.15], [1, 0.9])
+              opacity: useTransform(scrollYProgress, [0, 0.4], [isDark ? 0.08 : 0.05, 0]),
+              scale: useTransform(scrollYProgress, [0, 0.4], [1, 1.1]),
+              y: useTransform(scrollYProgress, [0, 1], [0, -50])
             }}
           >
-            {/* Logo para Modo Día */}
             <img 
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Arnica_logo_black-cQaFbk2rrt5lnksHDyYpSREWZ1AnkV.png"
-              alt="Arnica Logo"
-              className="w-48 md:w-64 h-auto dark:hidden block"
-            />
-            {/* Logo para Modo Noche */}
-            <img 
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Arnica_logo-8Uy5GvJpH77M7VC5hEz83NOZI2ZOqh.png"
-              alt="Arnica Logo"
-              className="w-48 md:w-64 h-auto hidden dark:block"
+              src={isDark 
+                ? 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Arnica_logo-8Uy5GvJpH77M7VC5hEz83NOZI2ZOqh.png'
+                : 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Arnica_logo_black-cQaFbk2rrt5lnksHDyYpSREWZ1AnkV.png'
+              }
+              alt="Arnica Watermark"
+              className="w-[90%] md:w-[70%] h-auto opacity-100 select-none"
             />
           </motion.div>
 
-          {/* 2. Diagrama Minimalista */}
+          {/* 1. Diagrama Minimalista */}
           <motion.div 
-            className="relative w-full max-w-4xl mx-auto p-4"
+            className="relative w-full max-w-4xl mx-auto p-4 z-10"
             style={{ 
               opacity: diagramOpacity,
               y: svgY
