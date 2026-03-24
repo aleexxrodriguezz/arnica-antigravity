@@ -147,12 +147,15 @@ export function ScrollDrawSection() {
   
   useMotionValueEvent(progress, 'change', v => {
     setCurrentProgress(v)
-    
-    // Skip sound logic on mobile
+  })
+
+  useMotionValueEvent(scrollYProgress, 'change', v => {
+    // Sound logic: Start at roughly where the transform starts and end at the total completion
+    // scrollYProgress 0 is when technical diagram starts at 7%
+    // scrollYProgress 0.90+ is when it reaches 100%
     if (isMobile) return
 
-    // Sound logic
-    const inZone = v > 0 && v < 1.0
+    const inZone = v > 0.001 && v < 0.99
     
     if (inZone) {
       if (!inSoundZoneRef.current) {
@@ -174,19 +177,18 @@ export function ScrollDrawSection() {
   return (
     <section
       ref={wrapperRef}
-      className="relative w-full bg-white dark:bg-[#000000]"
+      className="relative w-full bg-[#fef9f3] dark:bg-[#000000]"
       aria-label="Scroll-driven technical diagram"
     >
       <div style={{ height: '400vh' }}>
-        <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-white dark:bg-[#000000]">
+        <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-[#fef9f3] dark:bg-[#000000]">
 
-          {/* 0. Logo de Fondo (Marca de Agua) - Estilo solicitado por el usuario */}
+          {/* 0. Logo de Fondo (Marca de Agua) - Sincronizado con PageShell */}
           <motion.div
             className="absolute inset-0 flex items-center justify-center pointer-events-none z-0"
             style={{ 
-              opacity: useTransform(scrollYProgress, [0, 0.4], [isDark ? 0.08 : 0.05, 0]),
-              scale: useTransform(scrollYProgress, [0, 0.4], [1, 1.1]),
-              y: useTransform(scrollYProgress, [0, 1], [0, -50])
+              opacity: useTransform(scrollYProgress, [0.05, 0.4], [isDark ? 0.04 : 0.05, 0]),
+              scale: useTransform(scrollYProgress, [0, 0.5], [1, 1.1])
             }}
           >
             <img 
@@ -194,8 +196,8 @@ export function ScrollDrawSection() {
                 ? 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Arnica_logo-8Uy5GvJpH77M7VC5hEz83NOZI2ZOqh.png'
                 : 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Arnica_logo_black-cQaFbk2rrt5lnksHDyYpSREWZ1AnkV.png'
               }
-              alt="Arnica Watermark"
-              className="w-[90%] md:w-[70%] h-auto opacity-100 select-none"
+              alt=""
+              className="w-[60vw] max-w-[800px] h-auto select-none"
             />
           </motion.div>
 
@@ -223,7 +225,7 @@ export function ScrollDrawSection() {
                 style={{ opacity: currentProgress > 0.02 ? 1 : 0 }}
               >
                 <span className="w-8 h-px bg-black/20 dark:bg-white/40" />
-                <span className="text-xs font-bold tracking-[0.2em] uppercase text-black/60 dark:text-white/80">Sistema Creativo Arnica</span>
+                <span className="text-xs font-bold tracking-[0.2em] uppercase text-black dark:text-white/80">Sistema Creativo Arnica</span>
                 <span className="w-8 h-px bg-black/20 dark:bg-white/40" />
               </motion.div>
 
