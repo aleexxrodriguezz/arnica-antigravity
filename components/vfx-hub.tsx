@@ -9,7 +9,7 @@ export function VFXHubSection() {
 
   return (
     <section 
-      className={`relative w-full h-screen z-50 border-t ${isDark ? 'bg-[#05050a] border-white/5' : 'bg-white border-black/5'}`} 
+      className="relative w-full h-screen z-50 border-t bg-white dark:bg-[#05050a] border-black/5 dark:border-white/5" 
       id="vfx-hub"
     >
       <iframe
