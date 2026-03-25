@@ -1,798 +1,852 @@
 <!DOCTYPE html>
-
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>ARNICA — VFX VIDEO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARNICA — VFX STUDIO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;700;900&family=Share+Tech+Mono&display=swap');
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
 :root{
-  --acid:#DFFF00; --pink:#ff2d9b; --cyan:#00ffee;
-  --orange:#ff6b00; --white:#f0ede8; --ink:#05050a;
-}
-html,body{width:100%;height:100%;background:var(--ink);overflow:hidden;
-  font-family:'Share Tech Mono',monospace;color:var(--acid);cursor:none;}
-
-/* CURSOR */
-#cur{position:fixed;width:20px;height:20px;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
-#cur::before,#cur::after{content:'';position:absolute;background:var(--acid);}
-#cur::before{top:50%;left:0;right:0;height:1px;}#cur::after{left:50%;top:0;bottom:0;width:1px;}
-#curDot{position:fixed;width:4px;height:4px;background:var(--acid);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);box-shadow:0 0 8px var(--acid);}
-
-/* MAIN CANVAS — fills screen */
-#C{position:fixed;inset:0;width:100%;height:100%;z-index:0;}
-
-/* OVERLAY SCANLINES */
-.scan{position:fixed;inset:0;z-index:1;pointer-events:none;
-background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);}
-.vignette{position:fixed;inset:0;z-index:1;pointer-events:none;
-background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,0.6) 100%);}
-
-/* HUD LAYER */
-.hud{position:fixed;inset:0;z-index:5;pointer-events:none;display:flex;flex-direction:column;}
-
-/* TOPBAR */
-.topbar{
-display:flex;align-items:center;justify-content:space-between;
-padding:14px 32px;pointer-events:all;
-background:linear-gradient(to bottom,rgba(5,5,10,0.9) 0%,transparent 100%);
-}
-.logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2.2rem;
-letter-spacing:0.22em;color:var(--acid);text-shadow:0 0 30px rgba(176,255,0,0.5),0 0 60px rgba(176,255,0,0.2);}
-.logo span{color:rgba(176,255,0,0.4);font-weight:300;}
-.nav-pills{display:flex;gap:10px;}
-.np{padding:3px 12px;border:1px solid rgba(176,255,0,0.2);font-size:0.52rem;
-letter-spacing:0.22em;color:rgba(176,255,0,0.4);}
-.np.on{border-color:var(--acid);color:var(--acid);background:rgba(176,255,0,0.07);}
-.np.rec{border-color:var(--pink);color:var(--pink);background:rgba(255,45,155,0.09);
-animation:recBlink 0.7s ease-in-out infinite;}
-@keyframes recBlink{0%,100%{opacity:1}50%{opacity:0.3}}
-
-/* SPACER */
-.hud-mid{flex:1;}
-
-/* BOTTOM CONTROL BAR */
-.botbar{
-pointer-events:all;
-background:linear-gradient(to top,rgba(5,5,10,0.95) 0%,transparent 100%);
-padding:0 24px 14px;
+  --bg:#080808;
+  --panel:#0f0f0f;
+  --border:rgba(255,255,255,0.08);
+  --fg:#e8e4dc;
+  --mid:rgba(232,228,220,0.45);
+  --dim:rgba(232,228,220,0.12);
+  --accent:#c8f000;
+  --panel-w:280px;
 }
 
-/* PROGRESS */
-.prog-row{display:flex;align-items:center;gap:12px;padding:8px 0 10px;}
-.prog-track{flex:1;height:3px;background:rgba(176,255,0,0.1);cursor:pointer;position:relative;}
-.prog-fill{height:100%;background:var(--acid);box-shadow:0 0 8px var(--acid);width:0%;}
-.prog-head{position:absolute;top:50%;right:0;width:10px;height:10px;background:var(--acid);border-radius:50%;transform:translate(50%,-50%);box-shadow:0 0 10px var(--acid);}
-.prog-time{font-size:0.52rem;letter-spacing:0.15em;color:var(--acid);min-width:80px;text-align:right;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--fg);font-family:'Share Tech Mono',monospace}
 
-/* CONTROLS */
-.ctrl-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+/* ── LAYOUT ── */
+#app{display:flex;width:100%;height:100%}
 
-/* TRANSPORT BTNS */
-.btn{border:1px solid rgba(176,255,0,0.25);background:transparent;color:var(--acid);
-font-family:'Share Tech Mono',monospace;font-size:0.52rem;letter-spacing:0.18em;
-padding:6px 14px;cursor:pointer;transition:all .14s;white-space:nowrap;}
-.btn:hover{background:rgba(176,255,0,0.1);border-color:var(--acid);}
-.btn.on,.btn.active{background:rgba(176,255,0,0.15);border-color:var(--acid);
-box-shadow:0 0 12px rgba(176,255,0,0.25);}
-.btn.pk{border-color:var(--pink);color:var(--pink);}
-.btn.pk:hover,.btn.pk.active{background:rgba(255,45,155,0.15);border-color:var(--pink);
-box-shadow:0 0 12px rgba(255,45,155,0.25);}
-.btn.cy{border-color:var(--cyan);color:var(--cyan);}
-.btn.cy:hover,.btn.cy.active{background:rgba(0,255,238,0.12);}
-.btn.big{font-size:0.62rem;padding:8px 20px;}
+#stage{flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
 
-/* VFX TOGGLES */
-.vfx-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
-.vtog{padding:4px 10px;border:1px solid rgba(176,255,0,0.15);
-font-size:0.46rem;letter-spacing:0.18em;color:rgba(176,255,0,0.35);cursor:pointer;transition:all .12s;}
-.vtog:hover{border-color:rgba(176,255,0,0.4);color:rgba(176,255,0,0.7);}
-.vtog.on{border-color:var(--acid);color:var(--acid);background:rgba(176,255,0,0.06);}
-.vtog.pk.on{border-color:var(--pink);color:var(--pink);background:rgba(255,45,155,0.06);}
-.vtog.cy.on{border-color:var(--cyan);color:var(--cyan);background:rgba(0,255,238,0.06);}
-.vtog.or.on{border-color:var(--orange);color:var(--orange);background:rgba(255,107,0,0.06);}
+canvas#vfx{display:block;image-rendering:crisp-edges}
 
-/* SLIDERS */
-.sl-group{display:flex;gap:16px;align-items:center;flex-wrap:wrap;}
-.sl-item{display:flex;align-items:center;gap:6px;}
-.sl-label{font-size:0.44rem;letter-spacing:0.2em;color:rgba(176,255,0,0.4);white-space:nowrap;}
-input[type=range]{-webkit-appearance:none;width:70px;height:2px;background:rgba(176,255,0,0.15);outline:none;}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;background:var(--acid);border-radius:0;cursor:pointer;box-shadow:0 0 6px var(--acid);}
-.sl-val{font-size:0.42rem;color:rgba(176,255,0,0.5);width:24px;}
+/* Overlay HUD top */
+#hud{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:14px 22px;border-bottom:1px solid var(--border);background:rgba(8,8,8,0.7);backdrop-filter:blur(6px);pointer-events:none;z-index:10}
+.hud-logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:5px}
+.hud-center{font-size:8px;letter-spacing:4px;color:var(--mid);display:flex;gap:18px}
+.hud-center span{display:flex;align-items:center;gap:6px}
+.dot-live{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:blink 1.2s infinite}
+#hud-time{font-size:9px;letter-spacing:3px;color:var(--mid)}
 
-/* REC INDICATOR */
-.rec-ind{
-position:fixed;top:50%;right:28px;transform:translateY(-50%);
-display:flex;flex-direction:column;align-items:center;gap:6px;
-pointer-events:none;z-index:6;opacity:0;transition:opacity .3s;
+/* ── PANEL ── */
+#panel{width:var(--panel-w);background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden}
+
+#panel::-webkit-scrollbar{width:3px}
+#panel::-webkit-scrollbar-track{background:transparent}
+#panel::-webkit-scrollbar-thumb{background:var(--border)}
+
+.panel-head{padding:16px 18px;border-bottom:1px solid var(--border);font-size:8px;letter-spacing:4px;color:var(--mid);display:flex;justify-content:space-between;align-items:center}
+.panel-head b{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;color:var(--fg)}
+
+.section{padding:14px 18px;border-bottom:1px solid var(--border)}
+.section-title{font-size:7px;letter-spacing:4px;color:rgba(200,240,0,0.7);margin-bottom:12px;text-transform:uppercase}
+
+/* Slider rows */
+.ctrl-row{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.ctrl-row:last-child{margin-bottom:0}
+.ctrl-label{display:flex;justify-content:space-between;font-size:8px;letter-spacing:2px;color:var(--mid)}
+.ctrl-label span{color:var(--accent);font-size:8px}
+
+input[type=range]{
+  -webkit-appearance:none;appearance:none;
+  width:100%;height:2px;background:var(--border);border-radius:0;outline:none;cursor:pointer;
 }
-.rec-ind.show{opacity:1;}
-.rec-circle{width:14px;height:14px;border-radius:50%;background:var(--pink);
-animation:recBlink 0.7s ease-in-out infinite;}
-.rec-label{font-size:0.46rem;letter-spacing:0.22em;color:var(--pink);}
-.rec-time{font-size:0.7rem;font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--pink);}
-
-/* CORNERS */
-.cor{position:fixed;width:24px;height:24px;pointer-events:none;z-index:6;}
-.cor::before,.cor::after{content:'';position:absolute;background:rgba(176,255,0,0.4);}
-.cor.tl{top:14px;left:14px;}.cor.tl::before{top:0;left:0;width:100%;height:1.5px;}.cor.tl::after{top:0;left:0;width:1.5px;height:100%;}
-.cor.tr{top:14px;right:14px;}.cor.tr::before{top:0;right:0;width:100%;height:1.5px;}.cor.tr::after{top:0;right:0;width:1.5px;height:100%;}
-.cor.bl{bottom:14px;left:14px;}.cor.bl::before{bottom:0;left:0;width:100%;height:1.5px;}.cor.bl::after{bottom:0;left:0;width:1.5px;height:100%;}
-.cor.br{bottom:14px;right:14px;}.cor.br::before{bottom:0;right:0;width:100%;height:1.5px;}.cor.br::after{bottom:0;right:0;width:1.5px;height:100%;}
-
-/* SIDE METERS */
-.meters{position:fixed;left:24px;top:50%;transform:translateY(-50%);
-display:flex;flex-direction:column;gap:5px;pointer-events:none;z-index:6;}
-.mrow{display:flex;align-items:center;gap:6px;}
-.mlbl{font-size:0.44rem;letter-spacing:0.2em;color:rgba(176,255,0,0.3);width:32px;}
-.mbar{width:60px;height:2px;background:rgba(176,255,0,0.08);position:relative;}
-.mfill{height:100%;background:var(--acid);box-shadow:0 0 4px var(--acid);transition:width .06s;}
-.mfill.pk{background:var(--pink);box-shadow:0 0 4px var(--pink);}
-.mfill.cy{background:var(--cyan);box-shadow:0 0 4px var(--cyan);}
-
-/* EVENT LOG */
-.elog{position:fixed;right:24px;bottom:140px;
-display:flex;flex-direction:column;gap:3px;pointer-events:none;z-index:6;}
-.eitem{font-size:0.42rem;letter-spacing:0.12em;padding:2px 8px;
-border-left:2px solid var(--acid);color:rgba(176,255,0,0.6);
-background:rgba(176,255,0,0.04);animation:fadeSlide .25s ease-out;}
-@keyframes fadeSlide{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:translateX(0)}}
-
-/* MOUSE CLICK VFX */
-.click-ring{position:fixed;border-radius:50%;pointer-events:none;z-index:7;
-border:1.5px solid var(--acid);animation:clickRing 0.5s ease-out forwards;}
-@keyframes clickRing{
-0%{width:0;height:0;opacity:1;transform:translate(-50%,-50%)}
-100%{width:80px;height:80px;opacity:0;transform:translate(-50%,-50%)}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:10px;height:10px;background:var(--fg);border-radius:0;cursor:pointer;
+  transition:background 0.2s;
 }
+input[type=range]::-webkit-slider-thumb:hover{background:var(--accent)}
+input[type=range]::-moz-range-thumb{width:10px;height:10px;background:var(--fg);border-radius:0;cursor:pointer;border:none}
+
+/* Toggle rows */
+.toggle-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.toggle-row:last-child{margin-bottom:0}
+.toggle-label{font-size:8px;letter-spacing:2px;color:var(--mid)}
+.toggle{position:relative;width:28px;height:14px;cursor:pointer}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:var(--border);border-radius:0;transition:0.2s}
+.toggle-slider::before{content:'';position:absolute;width:10px;height:10px;left:2px;top:2px;background:var(--dim);transition:0.2s}
+.toggle input:checked+.toggle-slider{background:rgba(200,240,0,0.25)}
+.toggle input:checked+.toggle-slider::before{transform:translateX(14px);background:var(--accent)}
+
+/* Color swatches */
+.color-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:10px}
+.swatch{width:100%;aspect-ratio:1;cursor:pointer;border:1px solid transparent;transition:border 0.15s,transform 0.15s}
+.swatch:hover{transform:scale(1.1)}
+.swatch.active{border-color:var(--fg)}
+
+/* Custom color */
+.custom-color-row{display:flex;gap:8px;align-items:center;margin-bottom:4px}
+#customColorInput{flex:1;font-size:8px;letter-spacing:2px;background:var(--bg);border:1px solid var(--border);color:var(--fg);padding:4px 6px;outline:none;font-family:inherit}
+#customColorInput:focus{border-color:var(--accent)}
+#customColorPick{width:22px;height:22px;padding:0;border:none;cursor:pointer;background:none;overflow:hidden}
+#customColorPick input[type=color]{width:30px;height:30px;border:none;cursor:pointer;margin:-4px;padding:0}
+
+/* Duration row */
+.dur-row{display:flex;gap:8px;align-items:center}
+.dur-input{width:60px;background:var(--bg);border:1px solid var(--border);color:var(--fg);font-family:inherit;font-size:9px;padding:5px 7px;letter-spacing:2px;outline:none;text-align:center}
+.dur-input:focus{border-color:var(--accent)}
+.dur-unit{font-size:8px;color:var(--mid);letter-spacing:2px}
+
+/* Buttons */
+.btn{width:100%;padding:9px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:4px;border:1px solid var(--border);background:transparent;color:var(--mid);cursor:pointer;transition:all 0.2s;text-transform:uppercase;margin-bottom:8px}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn:last-child{margin-bottom:0}
+.btn-primary{border-color:var(--accent);color:var(--accent)}
+.btn-primary:hover{background:rgba(200,240,0,0.08)}
+.btn-danger{border-color:rgba(255,80,80,0.4);color:rgba(255,80,80,0.6)}
+.btn-danger:hover{border-color:rgba(255,80,80,0.8);color:rgba(255,80,80,0.9)}
+
+/* Progress bar */
+#rec-progress-wrap{padding:10px 18px 0;display:none}
+#rec-progress-bar{height:2px;background:var(--border);width:100%}
+#rec-progress-fill{height:100%;background:var(--accent);width:0%;transition:width 0.1s linear}
+#rec-label{font-size:7px;letter-spacing:3px;color:var(--mid);margin-top:5px;text-align:center}
+
+/* Sequence picker */
+.seq-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.seq-btn{padding:6px 4px;font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:2px;border:1px solid var(--border);background:transparent;color:var(--mid);cursor:pointer;transition:all 0.2s;text-align:center}
+.seq-btn.on{border-color:var(--accent);color:var(--accent);background:rgba(200,240,0,0.05)}
+.seq-btn:hover{border-color:var(--mid)}
+
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
 </style>
 
 </head>
 <body>
+<div id="app">
 
-<div id="cur"></div><div id="curDot"></div>
-<canvas id="C"></canvas>
-<div class="scan"></div>
-<div class="vignette"></div>
-<div class="cor tl"></div><div class="cor tr"></div><div class="cor bl"></div><div class="cor br"></div>
-
-<!-- REC INDICATOR -->
-
-<div class="rec-ind" id="recInd">
-  <div class="rec-circle"></div>
-  <div class="rec-label">REC</div>
-  <div class="rec-time" id="recTimeDisp">0:00</div>
-</div>
-
-<!-- SIDE METERS -->
-
-<div class="meters">
-  <div class="mrow"><div class="mlbl">RMS</div><div class="mbar"><div class="mfill" id="mRms" style="width:0%"></div></div></div>
-  <div class="mrow"><div class="mlbl">KICK</div><div class="mbar"><div class="mfill" id="mKick" style="width:0%"></div></div></div>
-  <div class="mrow"><div class="mlbl">MID</div><div class="mbar"><div class="mfill cy" id="mMid" style="width:0%"></div></div></div>
-  <div class="mrow"><div class="mlbl">HI</div><div class="mbar"><div class="mfill" id="mHi" style="width:0%"></div></div></div>
-  <div class="mrow"><div class="mlbl">PHASE</div><div class="mbar"><div class="mfill pk" id="mPhase" style="width:0%"></div></div></div>
-</div>
-
-<!-- EVENT LOG -->
-
-<div class="elog" id="elog"></div>
-
-<!-- HUD -->
-
-<div class="hud">
-  <div class="topbar">
-    <div class="logo">ARNICA <span>SISTEMA CREATIVO</span></div>
-    <div class="nav-pills">
-      <div class="np on" id="npAudio">◉ AUDIO</div>
-      <div class="np on" id="npBpm">130 BPM</div>
-      <div class="np on" id="npVfx">VFX LIVE</div>
-      <div class="np" id="npRec">● REC</div>
+  <!-- ── STAGE ── -->
+  <div id="stage">
+    <div id="hud">
+      <div class="hud-logo">Arnica</div>
+      <div class="hud-center">
+        <span><div class="dot-live"></div>SISTEMA CREATIVO</span>
+        <span>AUDIO · MOTION · VFX</span>
+      </div>
+      <div id="hud-time">00:00:000</div>
     </div>
+    <canvas id="vfx"></canvas>
   </div>
-  <div class="hud-mid"></div>
-  <div class="botbar">
 
+  <!-- ── PANEL ── -->
+  <div id="panel">
+    <div class="panel-head">
+      <b>VFX STUDIO</b>
+      <span>ARNICA</span>
+    </div>
 
-<!-- VFX LAYER TOGGLES -->
-<div class="vfx-row" id="vfxToggles"></div>
+    <!-- SECUENCIAS -->
+    <div class="section">
+      <div class="section-title">Secuencias activas</div>
+      <div class="seq-grid">
+        <button class="seq-btn on" data-seq="drawIn">DRAW IN</button>
+        <button class="seq-btn on" data-seq="hexPulse">HEX PULSE</button>
+        <button class="seq-btn on" data-seq="signal">SEÑAL</button>
+        <button class="seq-btn on" data-seq="scan">SCAN</button>
+        <button class="seq-btn on" data-seq="rings">ANILLOS</button>
+        <button class="seq-btn on" data-seq="particles">PARTÍCULAS</button>
+        <button class="seq-btn on" data-seq="grid">GRID</button>
+        <button class="seq-btn on" data-seq="glow">GLOW</button>
+      </div>
+    </div>
 
-<!-- PROGRESS -->
-<div class="prog-row">
-  <div class="prog-track" id="progTrack">
-    <div class="prog-fill" id="progFill"></div>
-    <div class="prog-head" id="progHead"></div>
-  </div>
-  <div class="prog-time" id="progTime">0:00 / ∞</div>
-</div>
+    <!-- FORMAS -->
+    <div class="section">
+      <div class="section-title">Formas</div>
+      <div class="toggle-row">
+        <span class="toggle-label">Hexágono</span>
+        <label class="toggle"><input type="checkbox" id="tHex" checked><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">Círculos</span>
+        <label class="toggle"><input type="checkbox" id="tCircles" checked><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">Grid / Ejes</span>
+        <label class="toggle"><input type="checkbox" id="tGrid" checked><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">Watermark</span>
+        <label class="toggle"><input type="checkbox" id="tWatermark" checked><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">Nodos</span>
+        <label class="toggle"><input type="checkbox" id="tNodes" checked><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">Labels HUD</span>
+        <label class="toggle"><input type="checkbox" id="tLabels" checked><span class="toggle-slider"></span></label>
+      </div>
+    </div>
 
-<!-- MAIN CONTROLS -->
-<div class="ctrl-row">
-  <button class="btn big" id="techBtn" onclick="toggleTechno()">▶️ TECHNO 130</button>
-  <button class="btn pk big" id="recBtn" onclick="toggleVideoRec()">⏺ GRABAR VÍDEO</button>
-  <button class="btn cy" onclick="downloadLast()" id="dlBtn" style="display:none">↓ DESCARGAR .WEBM</button>
-  <div class="sl-group">
-    <div class="sl-item"><div class="sl-label">SPEED</div><input type="range" min="0.2" max="3" step="0.1" value="1" oninput="vfxSpeed=+this.value;updateSlVal(this,'speed')"><div class="sl-val" id="svspeed">1.0</div></div>
-    <div class="sl-item"><div class="sl-label">INTENSITY</div><input type="range" min="0.1" max="2" step="0.05" value="1" oninput="vfxInt=+this.value;updateSlVal(this,'int')"><div class="sl-val" id="svint">1.0</div></div>
-    <div class="sl-item"><div class="sl-label">DECAY</div><input type="range" min="0.01" max="0.99" step="0.01" value="0.88" oninput="trailDecay=+this.value;updateSlVal(this,'dec')"><div class="sl-val" id="svdec">.88</div></div>
-    <div class="sl-item"><div class="sl-label">BLOOM</div><input type="range" min="0" max="30" step="1" value="8" oninput="bloomAmt=+this.value;updateSlVal(this,'blm')"><div class="sl-val" id="svblm">8</div></div>
-  </div>
-</div>
+    <!-- VELOCIDAD -->
+    <div class="section">
+      <div class="section-title">Velocidad</div>
+      <div class="ctrl-row">
+        <div class="ctrl-label">Global <span id="vSpeedVal">1.0x</span></div>
+        <input type="range" id="vSpeed" min="0.1" max="4" step="0.05" value="1">
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-label">Señal H <span id="vSigHVal">1.0x</span></div>
+        <input type="range" id="vSigH" min="0.1" max="5" step="0.05" value="1">
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-label">Señal V <span id="vSigVVal">1.0x</span></div>
+        <input type="range" id="vSigV" min="0.1" max="5" step="0.05" value="1">
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-label">Rotación anillo <span id="vRotVal">1.0x</span></div>
+        <input type="range" id="vRot" min="0" max="6" step="0.05" value="1">
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-label">Scan sweep <span id="vScanVal">1.0x</span></div>
+        <input type="range" id="vScan" min="0.1" max="5" step="0.05" value="1">
+      </div>
+    </div>
 
-  </div>
+    <!-- LUZ & CONTRASTE -->
+    <div class="section">
+      <div class="section-title">Luz & Contraste</div>
+      <div class="ctrl-row">
+        <div class="ctrl-label">Brillo <span id="vBrightVal">1.00</span></div>
+        <input type="range" id="vBright" min="0.2" max="2.5" step="0.01" value="1">
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-label">Contraste <span id="vContVal">1.00</span></div>
+        <input type="range" id="vCont" min="0.2" max="3" step="0.01" value="1">
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-label">Glow fuerza <span id="vGlowVal">8</span></div>
+        <input type="range" id="vGlow" min="0" max="40" step="1" value="8">
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-label">Opacidad fondo <span id="vBgAlphaVal">0.12</span></div>
+        <input type="range" id="vBgAlpha" min="0.01" max="0.6" step="0.01" value="0.12">
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-label">Partículas alpha <span id="vPartAlphaVal">0.7</span></div>
+        <input type="range" id="vPartAlpha" min="0.05" max="1" step="0.01" value="0.7">
+      </div>
+    </div>
+
+    <!-- COLOR -->
+    <div class="section">
+      <div class="section-title">Color acento</div>
+      <div class="color-grid" id="swatches">
+        <div class="swatch active" style="background:#c8f000" data-color="#c8f000"></div>
+        <div class="swatch" style="background:#00f0c8" data-color="#00f0c8"></div>
+        <div class="swatch" style="background:#f000c8" data-color="#f000c8"></div>
+        <div class="swatch" style="background:#f06000" data-color="#f06000"></div>
+        <div class="swatch" style="background:#00c8f0" data-color="#00c8f0"></div>
+        <div class="swatch" style="background:#ffffff" data-color="#ffffff"></div>
+        <div class="swatch" style="background:#f0e000" data-color="#f0e000"></div>
+        <div class="swatch" style="background:#8000ff" data-color="#8000ff"></div>
+        <div class="swatch" style="background:#ff3040" data-color="#ff3040"></div>
+        <div class="swatch" style="background:#00ff60" data-color="#00ff60"></div>
+      </div>
+      <div class="custom-color-row">
+        <input type="text" id="customColorInput" placeholder="#c8f000" maxlength="7">
+        <div id="customColorPick"><input type="color" id="colorPicker" value="#c8f000"></div>
+      </div>
+      <div class="ctrl-row" style="margin-top:10px">
+        <div class="ctrl-label">Hex stroke alpha <span id="vHexAlphaVal">1.0</span></div>
+        <input type="range" id="vHexAlpha" min="0.05" max="1" step="0.01" value="1">
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-label">BG tint <span id="vBgTintVal">0.0</span></div>
+        <input type="range" id="vBgTint" min="0" max="0.18" step="0.005" value="0">
+      </div>
+    </div>
+
+    <!-- DURACIÓN -->
+    <div class="section">
+      <div class="section-title">Duración loop</div>
+      <div class="dur-row">
+        <input type="number" class="dur-input" id="durInput" value="30" min="1" max="600">
+        <span class="dur-unit">SEG</span>
+      </div>
+    </div>
+
+    <!-- ACCIONES -->
+    <div class="section">
+      <div class="section-title">Acciones</div>
+      <button class="btn btn-primary" id="btnReset">↺ REINICIAR ANIMACIÓN</button>
+      <button class="btn" id="btnFullscreen">⛶ PANTALLA COMPLETA</button>
+    </div>
+
+    <div id="rec-progress-wrap">
+      <div id="rec-progress-bar"><div id="rec-progress-fill"></div></div>
+      <div id="rec-label">PROCESSING...</div>
+    </div>
+
+  </div><!-- /panel -->
 </div>
 
 <script>
-// ══════════════════════════════════════════════════════════════
-//  ARNICA — VFX VIDEO GENERATOR
-//  Fullscreen canvas · All VFX layers · Techno 130 BPM
-//  MediaRecorder → export .webm video
-// ══════════════════════════════════════════════════════════════
+// ─────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────
+const state = {
+  speed: 1, sigH: 1, sigV: 1, rot: 1, scan: 1,
+  bright: 1, contrast: 1, glow: 8, bgAlpha: 0.12, partAlpha: 0.7,
+  accent: '#c8f000', hexAlpha: 1, bgTint: 0,
+  showHex: true, showCircles: true, showGrid: true,
+  showWatermark: true, showNodes: true, showLabels: true,
+  seq: { drawIn:true, hexPulse:true, signal:true, scan:true, rings:true, particles:true, grid:true, glow:true },
+  t: 0, startTime: null
+};
 
-// ── CANVAS ────────────────────────────────────────────────────
-const C=document.getElementById('C'), ctx=C.getContext('2d');
-let W,H,CX,CY;
-function resize(){W=C.width=window.innerWidth;H=C.height=window.innerHeight;CX=W/2;CY=H/2;}
-resize(); window.addEventListener('resize',resize);
+// ─────────────────────────────────────────────
+//  CANVAS SETUP
+// ─────────────────────────────────────────────
+const canvas = document.getElementById('vfx');
+const ctx = canvas.getContext('2d');
+const stage = document.getElementById('stage');
 
-// ── PARAMS ────────────────────────────────────────────────────
-let vfxSpeed=1, vfxInt=1, trailDecay=0.88, bloomAmt=8;
-let gT=0, mouseX=CX, mouseY=CY;
+function resize() {
+  const w = stage.clientWidth, h = stage.clientHeight;
+  canvas.width = w; canvas.height = h;
+}
+resize();
+window.addEventListener('resize', resize);
 
-// ── AUDIO ─────────────────────────────────────────────────────
-let AC, master, analyser, rvb, rvbW;
-let technoOn=false, technoTimer=null, nextBeat=0, gStep=0;
-const BPM=130, BEAT=60/BPM, S16=BEAT/4;
-
-function bootAC(){
-  if(AC)return;
-  AC=new(window.AudioContext||window.webkitAudioContext)();
-  master=AC.createGain(); master.gain.value=0.8;
-  analyser=AC.createAnalyser(); analyser.fftSize=2048;
-  rvb=AC.createConvolver(); rvb.buffer=mkImp(1.5,3.5);
-  rvbW=AC.createGain(); rvbW.gain.value=0.18;
-  master.connect(rvb); rvb.connect(rvbW);
-  master.connect(analyser); rvbW.connect(analyser);
-  analyser.connect(AC.destination);
-}
-function mkImp(d,dc){
-  const r=AC.sampleRate,l=Math.floor(r*d),b=AC.createBuffer(2,l,r);
-  for(let c=0;c<2;c++){const a=b.getChannelData(c);for(let i=0;i<l;i++)a[i]=(Math.random()*2-1)*Math.pow(1-i/l,dc);}
-  return b;
-}
-
-// synths
-function kick(t){
-  const now=t||AC.currentTime;
-  const o=AC.createOscillator(),g=AC.createGain();
-  o.frequency.setValueAtTime(160,now); o.frequency.exponentialRampToValueAtTime(38,now+0.07);
-  o.type='sine'; g.gain.setValueAtTime(1,now); g.gain.exponentialRampToValueAtTime(0.001,now+0.5);
-  o.connect(g);g.connect(master);o.start(now);o.stop(now+0.55);
-  const bl=Math.floor(AC.sampleRate*0.01),buf=AC.createBuffer(1,bl,AC.sampleRate);
-  const d=buf.getChannelData(0);for(let i=0;i<bl;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/(bl*0.2));
-  const s=AC.createBufferSource(),gk=AC.createGain();gk.gain.value=0.45;
-  s.buffer=buf;s.connect(gk);gk.connect(master);s.start(now);
-}
-function hihat(open,t){
-  const now=t||AC.currentTime,bl=Math.floor(AC.sampleRate*(open?0.18:0.04));
-  const buf=AC.createBuffer(1,bl,AC.sampleRate);
-  const d=buf.getChannelData(0);for(let i=0;i<bl;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/bl,open?2:9);
-  const s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();
-  f.type='highpass';f.frequency.value=7500;g.gain.value=open?0.18:0.14;
-  s.buffer=buf;s.connect(f);f.connect(g);g.connect(master);s.start(now);
-}
-function snare(t){
-  const now=t||AC.currentTime;
-  for(let i=0;i<3;i++){
-    const bl=Math.floor(AC.sampleRate*0.1),buf=AC.createBuffer(1,bl,AC.sampleRate);
-    const d=buf.getChannelData(0);for(let j=0;j<bl;j++)d[j]=(Math.random()*2-1)*Math.exp(-j/(bl*0.18));
-    const s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();
-    f.type='bandpass';f.frequency.value=900+i*200;f.Q.value=0.9;g.gain.value=0.3;
-    s.buffer=buf;s.connect(f);f.connect(g);g.connect(rvb);g.connect(master);s.start(now+i*0.009);
-  }
-}
-function bass(freq,dur,t){
-  const now=t||AC.currentTime;
-  const o=AC.createOscillator(),g=AC.createGain(),f=AC.createBiquadFilter();
-  o.type='sawtooth';o.frequency.value=freq;
-  f.type='lowpass';f.frequency.setValueAtTime(900,now);f.frequency.exponentialRampToValueAtTime(80,now+dur*0.7);f.Q.value=9;
-  g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(0.38,now+0.012);
-  g.gain.setValueAtTime(0.38,now+dur-0.04);g.gain.linearRampToValueAtTime(0,now+dur);
-  o.connect(f);f.connect(g);g.connect(master);o.start(now);o.stop(now+dur+0.05);
-}
-function acid(freq,t){
-  const now=t||AC.currentTime;
-  const o=AC.createOscillator(),g=AC.createGain(),f=AC.createBiquadFilter();
-  o.type='sawtooth';o.frequency.value=freq;
-  f.type='lowpass';f.Q.value=14;
-  f.frequency.setValueAtTime(120,now);f.frequency.exponentialRampToValueAtTime(2800,now+0.06);f.frequency.exponentialRampToValueAtTime(180,now+0.38);
-  g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(0.28,now+0.007);
-  g.gain.setValueAtTime(0.28,now+0.3);g.gain.linearRampToValueAtTime(0,now+0.4);
-  o.connect(f);f.connect(g);g.connect(master);o.start(now);o.stop(now+0.45);
-}
-function lead(freq,t){
-  const now=t||AC.currentTime;
-  const o=AC.createOscillator(),g=AC.createGain(),f=AC.createBiquadFilter();
-  o.type='square';o.frequency.value=freq;
-  f.type='bandpass';f.frequency.value=freq*2;f.Q.value=3;
-  g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(0.2,now+0.01);
-  g.gain.setValueAtTime(0.2,now+0.18);g.gain.linearRampToValueAtTime(0,now+0.22);
-  o.connect(f);f.connect(g);g.connect(master);o.start(now);o.stop(now+0.27);
+// ─────────────────────────────────────────────
+//  PARTICLES
+// ─────────────────────────────────────────────
+const particles = Array.from({length: 60}, () => newParticle());
+function newParticle(cx, cy) {
+  const W = canvas.width, H = canvas.height;
+  const cx_ = cx ?? W/2, cy_ = cy ?? H/2;
+  const angle = Math.random() * Math.PI * 2;
+  const dist = 40 + Math.random() * 220;
+  return {
+    x: cx_ + Math.cos(angle) * dist * (0.4 + Math.random() * 0.6),
+    y: cy_ + Math.sin(angle) * dist * (0.4 + Math.random() * 0.6),
+    vx: (Math.random() - 0.5) * 0.4,
+    vy: (Math.random() - 0.5) * 0.4,
+    r: 0.5 + Math.random() * 1.5,
+    alpha: 0.2 + Math.random() * 0.6,
+    life: Math.random(),
+    speed: 0.003 + Math.random() * 0.005
+  };
 }
 
-// Sequencer patterns
-const kP=[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0];
-const hP=[0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0];
-const sP=[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0];
-const ohP=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1];
-const bRoot=55, bSeq=[0,0,7,0,0,5,0,-5,0,0,7,5,0,-5,0,2];
-const aSeq=[0,-1,7,-1,0,5,-1,0,-1,7,-1,5,-1,0,2,-1];
-const lSeq=[-1,-1,-1,-1,12,-1,10,-1,-1,-1,-1,-1,15,-1,12,-1];
-
-function schedBeat(){
-  while(nextBeat<AC.currentTime+0.12){
-    const st=gStep%16, t=nextBeat;
-    if(kP[st])  kick(t);
-    if(hP[st])  hihat(false,t);
-    if(ohP[st]) hihat(true,t);
-    if(sP[st])  snare(t);
-    if(bSeq[st]!==undefined) bass(bRoot*Math.pow(2,bSeq[st]/12),S16*1.9,t);
-    if(aSeq[st]>=0) acid(bRoot*Math.pow(2,(aSeq[st]+12)/12),t);
-    if(lSeq[st]>=0) lead(bRoot*Math.pow(2,(lSeq[st]+24)/12),t);
-    gStep++; nextBeat+=S16;
-  }
-  technoTimer=setTimeout(schedBeat,18);
-}
-function toggleTechno(){
-  bootAC();if(AC.state==='suspended')AC.resume();
-  technoOn=!technoOn;
-  const b=document.getElementById('techBtn');
-  if(technoOn){nextBeat=AC.currentTime+0.05;gStep=0;schedBeat();b.textContent='⏸ TECHNO 130';b.classList.add('on');}
-  else{clearTimeout(technoTimer);b.textContent='▶️ TECHNO 130';b.classList.remove('on');}
-  elog(technoOn?'TECHNO ON — 130 BPM':'TECHNO OFF','acid');
-}
-
-// ── AUDIO HELPERS ─────────────────────────────────────────────
-function getRMS(){if(!analyser)return 0;const d=new Float32Array(analyser.fftSize);analyser.getFloatTimeDomainData(d);return Math.min(1,Math.sqrt(d.reduce((s,v)=>s+v*v,0)/d.length)*12);}
-function getFreq(a,b){if(!analyser)return 0;const d=new Uint8Array(analyser.frequencyBinCount);analyser.getByteFrequencyData(d);const sl=d.slice(a,b);return sl.reduce((s,v)=>s+v,0)/sl.length/255;}
-function getBP(){if(!AC||!technoOn)return 0;return(AC.currentTime%BEAT)/BEAT;}
-function getBarP(){if(!AC||!technoOn)return 0;return(AC.currentTime%(BEAT*4))/(BEAT*4);}
-
-// ── VFX LAYER SYSTEM ──────────────────────────────────────────
-const VFX_LAYERS=[
-  {id:'hex',    label:'HEXAGONAL',   col:'acid', on:true},
-  {id:'parts',  label:'PARTÍCULAS',  col:'acid', on:true},
-  {id:'flanger',label:'FLANGER WAVE',col:'pk',   on:true},
-  {id:'plasma', label:'PLASMA',      col:'cy',   on:true},
-  {id:'grid',   label:'NUTRE GRID',  col:'acid', on:true},
-  {id:'glitch', label:'GLITCH',      col:'or',   on:true},
-  {id:'rays',   label:'RAYOS',       col:'cy',   on:true},
-  {id:'trail',  label:'MOUSE TRAIL', col:'acid', on:true},
-  {id:'rings',  label:'BEAT RINGS',  col:'pk',   on:true},
-  {id:'tunnel', label:'TUNNEL',      col:'cy',   on:false},
-];
-let layers={};
-VFX_LAYERS.forEach(l=>layers[l.id]=l.on);
-
-function buildToggles(){
-  const wrap=document.getElementById('vfxToggles');
-  VFX_LAYERS.forEach(l=>{
-    const b=document.createElement('div');
-    b.className='vtog'+(['pk','cy','or'].includes(l.col)?` ${l.col}`:'')+( l.on?' on':'');
-    b.textContent=l.label;
-    b.dataset.id=l.id;
-    b.onclick=()=>{layers[l.id]=!layers[l.id];b.classList.toggle('on',layers[l.id]);elog((layers[l.id]?'ON':'OFF')+': '+l.label,l.col==='pk'?'pink':l.col==='cy'?'cyan':l.col==='or'?'orange':'acid');};
-    wrap.appendChild(b);
+function updateParticles() {
+  const W = canvas.width, H = canvas.height;
+  particles.forEach(p => {
+    p.life += p.speed * state.speed;
+    if (p.life > 1) { Object.assign(p, newParticle(W/2, H/2)); p.life = 0; }
+    p.x += p.vx * state.speed;
+    p.y += p.vy * state.speed;
   });
 }
 
-// ── PARTICLE SYSTEM ───────────────────────────────────────────
-let particles=[];
-function spawnParticles(x,y,count,col){
-  for(let i=0;i<count;i++){
-    const ang=Math.random()*Math.PI*2, spd=0.5+Math.random()*6*vfxInt;
-    particles.push({x,y,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,life:1,decay:0.015+Math.random()*0.03,size:0.5+Math.random()*3,col});
-  }
+// ─────────────────────────────────────────────
+//  HELPERS
+// ─────────────────────────────────────────────
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1,3),16),
+        g = parseInt(hex.slice(3,5),16),
+        b = parseInt(hex.slice(5,7),16);
+  return {r,g,b};
 }
-function drawParticles(){
-  particles=particles.filter(p=>{
-    p.life-=p.decay*vfxSpeed; if(p.life<=0)return false;
-    p.vx*=0.97; p.vy*=0.97; p.vy+=0.04;
-    p.x+=p.vx*vfxSpeed; p.y+=p.vy*vfxSpeed;
-    ctx.beginPath();ctx.arc(p.x,p.y,p.size*(0.5+p.life*0.5),0,Math.PI*2);
-    ctx.fillStyle=p.col.replace(',1)',`,${p.life})`);
-    if(bloomAmt>0){ctx.shadowBlur=bloomAmt*p.life;ctx.shadowColor=p.col;}
-    ctx.fill();ctx.shadowBlur=0;
-    return true;
-  });
+function accentRgba(a) {
+  const c = hexToRgb(state.accent);
+  return `rgba(${c.r},${c.g},${c.b},${a})`;
 }
+function fgRgba(a) { return `rgba(232,228,220,${a})`; }
 
-// Mouse trail
-let trail=[];
-function addTrail(x,y){trail.push({x,y,life:1});}
-function drawTrail(){
-  trail=trail.filter(t=>{t.life-=0.04*vfxSpeed;return t.life>0;});
-  if(trail.length<2)return;
-  ctx.beginPath();ctx.moveTo(trail[0].x,trail[0].y);
-  trail.forEach((t,i)=>{if(i>0)ctx.lineTo(t.x,t.y);});
-  ctx.strokeStyle=`rgba(176,255,0,0.4)`;ctx.lineWidth=1.5;
-  if(bloomAmt>0){ctx.shadowBlur=bloomAmt*0.5;ctx.shadowColor='rgba(176,255,0,0.6)';}
-  ctx.stroke();ctx.shadowBlur=0;
-}
+// easing
+function easeInOut(t) { return t<0.5 ? 2*t*t : -1+(4-2*t)*t; }
+function easeOut(t)   { return 1-(1-t)*(1-t); }
 
-// Wave history for flanger
-const WLEN=Math.max(W,1400); const waveH=new Array(WLEN).fill(0);
+// ─────────────────────────────────────────────
+//  DRAW FRAME
+// ─────────────────────────────────────────────
+function draw(ts) {
+  if (!state.startTime) state.startTime = ts;
+  const elapsed = (ts - state.startTime) / 1000;
+  state.t = elapsed * state.speed;
 
-// ── MAIN VFX DRAW ─────────────────────────────────────────────
-function drawVFX(){
-  const rm=getRMS(), kick=getFreq(1,5), mid=getFreq(8,24), hi=getFreq(40,80);
-  const bp=getBP(), barp=getBarP();
-  const S=Math.min(W,H);
+  const W = canvas.width, H = canvas.height;
+  const cx = W/2, cy = H/2;
+  const diag = Math.min(W, H);
+  const sc = diag / 520;
 
-  // TRAIL DECAY (instead of full clear)
-  ctx.fillStyle=`rgba(5,5,10,${1-trailDecay})`;
+  // BG
+  const bg = hexToRgb(state.accent);
+  ctx.fillStyle = `rgba(${bg.r},${bg.g},${bg.b},${state.bgTint})`;
+  ctx.fillRect(0,0,W,H);
+  ctx.fillStyle = `rgba(8,8,8,${state.bgAlpha})`;
   ctx.fillRect(0,0,W,H);
 
-  // ── TUNNEL ────────────────────────────────────────────────
-  if(layers.tunnel){
-    const rings=12;
-    for(let i=0;i<rings;i++){
-      const phase=(gT*vfxSpeed*0.003+i/rings)%1;
-      const r=(1-phase)*S*0.65+rm*50;
-      const a=phase*0.3*vfxInt;
-      ctx.beginPath();ctx.arc(CX,CY,r,0,Math.PI*2);
-      ctx.strokeStyle=`rgba(0,255,238,${a})`;ctx.lineWidth=1;ctx.stroke();
-    }
+  // Apply brightness/contrast via globalAlpha trick + filter
+  ctx.save();
+  const filterStr = `brightness(${state.bright}) contrast(${state.contrast})`;
+  if (ctx.filter !== undefined) ctx.filter = filterStr;
+
+  const t = state.t;
+
+  // ── WATERMARK ──
+  if (state.showWatermark) {
+    ctx.save();
+    ctx.globalAlpha = 0.045 + 0.015 * Math.sin(t * 0.3);
+    ctx.font = `${Math.floor(130*sc)}px 'Bebas Neue', sans-serif`;
+    ctx.fillStyle = fgRgba(1);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Arnica', cx, cy);
+    ctx.restore();
   }
 
-  // ── NUTRE GRID ────────────────────────────────────────────
-  if(layers.grid){
-    const cols=16,rows=8,cw=W/cols,ch=H/rows;
-    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
-      const idx=r*cols+c;
-      const phase=((gT*vfxSpeed*0.06-idx*0.1)%1+1)%1;
-      const bright=Math.pow(Math.max(0,1-phase*2.5),2)*(0.4+rm*0.8+kick*0.5)*vfxInt;
-      if(bright<0.02) continue;
-      ctx.fillStyle=`rgba(176,255,0,${bright*0.5})`;
-      ctx.fillRect(c*cw+1,r*ch+1,cw-2,ch-2);
-      ctx.strokeStyle=`rgba(176,255,0,${bright*0.35})`;
-      ctx.lineWidth=0.5;ctx.strokeRect(c*cw+1,r*ch+1,cw-2,ch-2);
-    }
-  }
-
-  // ── PLASMA / LISSAJOUS ────────────────────────────────────
-  if(layers.plasma){
-    const n=300, lfoA=Math.sin(gT*vfxSpeed*0.008), lfoB=Math.cos(gT*vfxSpeed*0.011);
+  // ── OUTER SPINNING RING ──
+  if (state.seq.rings) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(t * 0.08 * state.rot);
+    ctx.strokeStyle = fgRgba(0.07);
+    ctx.lineWidth = 0.6;
+    ctx.setLineDash([8*sc, 6*sc]);
     ctx.beginPath();
-    for(let i=0;i<n;i++){
-      const t2=i/n*Math.PI*2;
-      const x=CX+(Math.sin(t2*3+lfoA*2+rm*3)*0.38+Math.sin(t2*2)*0.12)*(W*0.38)*(0.7+vfxInt*0.4);
-      const y=CY+(Math.sin(t2*2+lfoB*2+mid*3)*0.38+Math.cos(t2*3)*0.12)*(H*0.38)*(0.7+vfxInt*0.4);
-      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-    }
-    ctx.strokeStyle=`rgba(0,255,238,${0.18*vfxInt})`;ctx.lineWidth=1;
-    if(bloomAmt>0){ctx.shadowBlur=bloomAmt;ctx.shadowColor='rgba(0,255,238,0.4)';}
-    ctx.stroke();ctx.shadowBlur=0;
-  }
-
-  // ── HEXAGONAL SYSTEM ──────────────────────────────────────
-  if(layers.hex){
-    const szs=[S*0.44, S*0.30, S*0.17, S*0.09];
-    szs.forEach((r,si)=>{
-      const ar=r+rm*r*0.12*vfxInt+kick*r*0.06;
-      const rot=gT*vfxSpeed*(si%2===0?0.002:-0.0025)+si*0.28;
-      const pts=Array.from({length:6},(_,i)=>({
-        x:CX+Math.cos(i/6*Math.PI*2+rot)*ar,
-        y:CY+Math.sin(i/6*Math.PI*2+rot)*ar
-      }));
-      ctx.beginPath();pts.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));ctx.closePath();
-      const alpha=[0.35,0.25,0.18,0.12][si]*vfxInt;
-      ctx.strokeStyle=`rgba(176,255,0,${alpha})`;ctx.lineWidth=1;
-      if(bloomAmt>0&&si===0){ctx.shadowBlur=bloomAmt;ctx.shadowColor='rgba(176,255,0,0.3)';}
-      ctx.stroke();ctx.shadowBlur=0;
-      pts.forEach((p,pi)=>{
-        const pulse=si===0?getFreq(pi*4,pi*4+6)*(0.6+0.4*Math.sin(gT*0.1+pi)):0.1+0.1*Math.sin(gT*0.05+pi+si);
-        const pr=2+pulse*7*vfxInt+kick*5;
-        ctx.beginPath();ctx.arc(p.x,p.y,pr,0,Math.PI*2);
-        ctx.fillStyle=`rgba(176,255,0,${0.5+pulse*0.45})`;
-        if(bloomAmt>0&&pulse>0.4){ctx.shadowBlur=bloomAmt*1.5;ctx.shadowColor='rgba(176,255,0,0.5)';}
-        ctx.fill();ctx.shadowBlur=0;
-      });
-      if(si===0){[[0,3],[1,4],[2,5]].forEach(([a,b])=>{ctx.beginPath();ctx.moveTo(pts[a].x,pts[a].y);ctx.lineTo(pts[b].x,pts[b].y);ctx.strokeStyle='rgba(176,255,0,0.07)';ctx.lineWidth=0.8;ctx.stroke();});}
-    });
-
-    // Concentric circles
-    [S*0.2,S*0.13,S*0.07].forEach(r=>{
-      ctx.beginPath();ctx.arc(CX,CY,r+rm*14,0,Math.PI*2);
-      ctx.strokeStyle=`rgba(176,255,0,${0.1*vfxInt})`;ctx.lineWidth=0.8;ctx.stroke();
-    });
-    // Crosshairs
-    ctx.strokeStyle=`rgba(176,255,0,${0.12*vfxInt})`;ctx.lineWidth=0.8;ctx.setLineDash([4,10]);
-    ctx.beginPath();ctx.moveTo(CX,0);ctx.lineTo(CX,H);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(0,CY);ctx.lineTo(W,CY);ctx.stroke();
+    ctx.arc(0, 0, 230*sc, 0, Math.PI*2);
+    ctx.stroke();
     ctx.setLineDash([]);
-    // Centre node
-    const cr=5+rm*22*vfxInt+kick*16;
-    ctx.beginPath();ctx.arc(CX,CY,cr,0,Math.PI*2);
-    ctx.fillStyle=`rgba(176,255,0,${0.88+rm*0.12})`;
-    if(bloomAmt>0){ctx.shadowBlur=bloomAmt*2;ctx.shadowColor='rgba(176,255,0,0.7)';}
-    ctx.fill();ctx.shadowBlur=0;
-    // Watermark
-    ctx.save();ctx.font=`italic 900 ${S*0.25}px 'Barlow Condensed',sans-serif`;
-    ctx.fillStyle=`rgba(176,255,0,${0.028*vfxInt})`;ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText('Arnica',CX,CY);ctx.restore();
+    ctx.restore();
   }
 
-  // ── RAYS / ELECTRIC ───────────────────────────────────────
-  if(layers.rays){
-    const rayCount=6+Math.floor(rm*8);
-    for(let i=0;i<rayCount;i++){
-      const ang=(i/rayCount)*Math.PI*2+gT*vfxSpeed*0.004+kick*0.5;
-      const len=(S*0.3+rm*S*0.2+kick*80)*vfxInt;
-      let rx=CX, ry=CY;
-      ctx.beginPath();ctx.moveTo(rx,ry);
-      const segs=8;
-      for(let s=0;s<segs;s++){
-        const t2=s/segs;
-        const jitter=(1-t2)*20*vfxInt;
-        rx+=Math.cos(ang+Math.sin(gT*0.1+s+i)*0.6)*len/segs+(Math.random()-0.5)*jitter;
-        ry+=Math.sin(ang+Math.sin(gT*0.1+s+i)*0.6)*len/segs+(Math.random()-0.5)*jitter;
-        ctx.lineTo(rx,ry);
-      }
-      ctx.strokeStyle=`rgba(0,255,238,${(0.08+rm*0.15)*vfxInt})`;ctx.lineWidth=0.8;
-      if(bloomAmt>0&&rm>0.3){ctx.shadowBlur=bloomAmt;ctx.shadowColor='rgba(0,255,238,0.4)';}
-      ctx.stroke();ctx.shadowBlur=0;
-    }
+  // ── GRID / BORDER BOXES ──
+  if (state.showGrid && state.seq.grid) {
+    ctx.save();
+    // outer box
+    ctx.strokeStyle = fgRgba(0.12);
+    ctx.lineWidth = 0.6;
+    strokeRect(ctx, cx - 280*sc, cy - 200*sc, 560*sc, 400*sc);
+    // inner box
+    ctx.strokeStyle = fgRgba(0.08);
+    strokeRect(ctx, cx - 240*sc, cy - 170*sc, 480*sc, 340*sc);
+    ctx.restore();
   }
 
-  // ── FLANGER WAVE ──────────────────────────────────────────
-  if(layers.flanger){
-    const depth=0.65+0.35*Math.sin(gT*vfxSpeed*0.04);
-    const lfo=Math.sin(gT*vfxSpeed*0.02)*depth;
-    const audioS=analyser?(()=>{const d=new Float32Array(64);analyser.getFloatTimeDomainData(d);return d[gT%64]||0;})():0;
-    waveH.push((Math.sin(gT*vfxSpeed*0.12)*0.5+Math.sin(gT*vfxSpeed*0.12*(1+lfo*0.003))*0.5)*depth*0.7+audioS*0.4);
-    if(waveH.length>W) waveH.shift();
-    const wY=H*0.5+Math.sin(gT*0.01)*H*0.08;
-    const amplitude=H*0.12*vfxInt;
-    // main wave
-    ctx.beginPath();
-    for(let i=0;i<Math.min(waveH.length,W);i++){
-      const y=wY+waveH[waveH.length-Math.min(waveH.length,W)+i]*amplitude;
-      i===0?ctx.moveTo(i,y):ctx.lineTo(i,y);
-    }
-    ctx.strokeStyle=`rgba(255,45,155,${0.65*vfxInt})`;ctx.lineWidth=1.5;
-    if(bloomAmt>0){ctx.shadowBlur=bloomAmt;ctx.shadowColor='rgba(255,45,155,0.5)';}
-    ctx.stroke();ctx.shadowBlur=0;
-    // comb echo
-    ctx.beginPath();
-    for(let i=0;i<Math.min(waveH.length,W);i++){
-      const y=wY+waveH[waveH.length-Math.min(waveH.length,W)+i]*amplitude*(1+lfo*0.4)+8;
-      i===0?ctx.moveTo(i,y):ctx.lineTo(i,y);
-    }
-    ctx.strokeStyle=`rgba(255,45,155,${0.18*vfxInt})`;ctx.lineWidth=1;ctx.stroke();
+  // ── AXIS LINES ──
+  if (state.showGrid) {
+    ctx.save();
+    ctx.strokeStyle = fgRgba(0.35);
+    ctx.lineWidth = 0.7;
+    ctx.setLineDash([4*sc, 0]);
+    // H
+    ctx.beginPath(); ctx.moveTo(cx-310*sc, cy); ctx.lineTo(cx+310*sc, cy); ctx.stroke();
+    // V
+    ctx.beginPath(); ctx.moveTo(cx, cy-245*sc); ctx.lineTo(cx, cy+245*sc); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
   }
 
-  // ── BEAT RINGS ────────────────────────────────────────────
-  if(layers.rings){
-    if(bp<0.14&&technoOn){
-      const pa=(1-bp/0.14);
-      [0.08,0.14,0.22,0.32].forEach((f,ri)=>{
-        const r=S*f*(bp/0.14+0.01);
-        ctx.beginPath();ctx.arc(CX,CY,r,0,Math.PI*2);
-        ctx.strokeStyle=`rgba(255,45,155,${pa*(0.55-ri*0.12)*vfxInt*(0.4+rm)})`;
-        ctx.lineWidth=2-ri*0.3;
-        if(bloomAmt>0){ctx.shadowBlur=bloomAmt*pa;ctx.shadowColor='rgba(255,45,155,0.5)';}
-        ctx.stroke();ctx.shadowBlur=0;
-      });
-      // Kick spawns particles
-      if(kick>0.4) spawnParticles(CX,CY,Math.floor(kick*30*vfxInt),'rgba(176,255,0,1)');
-    }
-  }
-
-  // ── PARTICLES ────────────────────────────────────────────
-  if(layers.parts) drawParticles();
-
-  // ── MOUSE TRAIL ───────────────────────────────────────────
-  if(layers.trail){addTrail(mouseX,mouseY);drawTrail();}
-
-  // ── GLITCH ────────────────────────────────────────────────
-  if(layers.glitch&&(Math.random()<0.04*vfxInt||kick>0.5)){
-    const sliceCount=3+Math.floor(Math.random()*5);
-    for(let i=0;i<sliceCount;i++){
-      const sy=Math.random()*H, sh=2+Math.random()*30;
-      const dx=(Math.random()-0.5)*40*vfxInt;
-      try{
-        const id=ctx.getImageData(0,sy,W,sh);
-        ctx.putImageData(id,dx,sy+Math.floor((Math.random()-0.5)*4));
-      } catch(e){}
-    }
-    // RGB split
-    if(kick>0.6&&Math.random()<0.3){
-      const id=ctx.getImageData(0,0,W,H);
-      const d=id.data;
-      const shift=Math.floor(kick*8*vfxInt);
-      for(let i=0;i<d.length;i+=4){
-        const off=(i+shift*4)%d.length;
-        d[i]=d[off];
-      }
-      ctx.putImageData(id,0,0);
-    }
-  }
-
-  // ── SYNC TRAVEL DOTS ─────────────────────────────────────
-  if(layers.hex){
-    const outerPts=Array.from({length:6},(_,i)=>({
-      x:CX+Math.cos(i/6*Math.PI*2+gT*vfxSpeed*0.002)*S*0.42,
-      y:CY+Math.sin(i/6*Math.PI*2+gT*vfxSpeed*0.002)*S*0.42
-    }));
-    outerPts.forEach((p,i)=>{
-      const phase=((gT*vfxSpeed*0.006+i*0.167)%1);
-      const tx=CX+(p.x-CX)*phase, ty=CY+(p.y-CY)*phase;
-      ctx.strokeStyle=`rgba(176,255,0,0.1)`;ctx.lineWidth=0.6;ctx.setLineDash([3,8]);
-      ctx.beginPath();ctx.moveTo(CX,CY);ctx.lineTo(p.x,p.y);ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.beginPath();ctx.arc(tx,ty,2+rm*3*vfxInt,0,Math.PI*2);
-      ctx.fillStyle=`rgba(176,255,0,${0.7+rm*0.3})`;
-      if(bloomAmt>0){ctx.shadowBlur=bloomAmt;ctx.shadowColor='rgba(176,255,0,0.5)';}
-      ctx.fill();ctx.shadowBlur=0;
+  // ── CONCENTRIC CIRCLES ──
+  if (state.showCircles && state.seq.rings) {
+    const radii = [160, 110];
+    radii.forEach((r, i) => {
+      ctx.save();
+      ctx.strokeStyle = fgRgba(0.18 - i*0.04);
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r*sc, 0, Math.PI*2);
+      ctx.stroke();
+      ctx.restore();
     });
   }
 
-  // ── LOGO WATERMARK PULSING ────────────────────────────────
-  if(bp<0.06&&technoOn){
-    ctx.save();ctx.font=`italic 900 ${S*0.26}px 'Barlow Condensed',sans-serif`;
-    const flash=(1-bp/0.06)*0.15*vfxInt*(0.5+kick);
-    ctx.fillStyle=`rgba(176,255,0,${flash})`;ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText('Arnica',CX,CY);ctx.restore();
+  // ── HEX SHAPE ──
+  if (state.showHex) {
+    const pts = [
+      [cx-140*sc, cy],
+      [cx-80*sc,  cy-80*sc],
+      [cx+80*sc,  cy-80*sc],
+      [cx+140*sc, cy],
+      [cx+80*sc,  cy+80*sc],
+      [cx-80*sc,  cy+80*sc],
+    ];
+
+    // Glow under hex
+    if (state.seq.glow && state.glow > 0) {
+      ctx.save();
+      ctx.shadowColor = accentRgba(0.6);
+      ctx.shadowBlur = state.glow * sc;
+      ctx.strokeStyle = accentRgba(0.15 * state.hexAlpha);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      pts.forEach(([x,y],i) => i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y));
+      ctx.closePath();
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // Hex pulse animation
+    if (state.seq.hexPulse) {
+      const pulse = 0.5 + 0.5 * Math.sin(t * 1.5);
+      ctx.save();
+      ctx.strokeStyle = accentRgba(0.08 + 0.12 * pulse);
+      ctx.lineWidth = 8*sc;
+      ctx.beginPath();
+      pts.forEach(([x,y],i) => i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y));
+      ctx.closePath();
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // Main hex
+    ctx.save();
+    ctx.strokeStyle = fgRgba(state.hexAlpha);
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    pts.forEach(([x,y],i) => i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y));
+    ctx.closePath();
+    ctx.stroke();
+
+    // Diagonals
+    ctx.strokeStyle = fgRgba(0.2 * state.hexAlpha);
+    ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]); ctx.lineTo(cx,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pts[1][0],pts[1][1]); ctx.lineTo(cx,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pts[2][0],pts[2][1]); ctx.lineTo(cx,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pts[3][0],pts[3][1]); ctx.lineTo(cx,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pts[4][0],pts[4][1]); ctx.lineTo(cx,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pts[5][0],pts[5][1]); ctx.lineTo(cx,cy); ctx.stroke();
+    ctx.restore();
   }
 
-  // ── PROGRESS BAR ─────────────────────────────────────────
-  if(technoOn&&AC){
-    const barPct=getBarP();
-    document.getElementById('progFill').style.width=(barPct*100)+'%';
-    document.getElementById('progHead').style.right=((1-barPct)*100)+'%';
-    const secs=Math.floor(AC.currentTime);
-    document.getElementById('progTime').textContent=Math.floor(secs/60)+':'+(secs%60+'').padStart(2,'0')+' / ∞';
+  // ── CENTER CIRCLE ──
+  if (state.showCircles) {
+    ctx.save();
+    const pulse2 = 0.5 + 0.5 * Math.sin(t * 2);
+    if (state.seq.glow) {
+      ctx.shadowColor = accentRgba(0.8);
+      ctx.shadowBlur = (state.glow + 6) * sc;
+    }
+    ctx.strokeStyle = fgRgba(0.9);
+    ctx.lineWidth = 1.5;
+    ctx.fillStyle = fgRgba(0.03);
+    ctx.beginPath();
+    ctx.arc(cx, cy, 60*sc, 0, Math.PI*2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    // inner pulse ring
+    if (state.seq.hexPulse) {
+      ctx.save();
+      const rp = 60*sc + 20*sc * (0.5 + 0.5 * Math.sin(t * 2.5));
+      ctx.strokeStyle = accentRgba(0.3 * (1 - (rp - 60*sc) / (20*sc)));
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rp, 0, Math.PI*2);
+      ctx.stroke();
+      ctx.restore();
+    }
   }
 
-  // ── METERS ────────────────────────────────────────────────
-  document.getElementById('mRms').style.width=Math.round(rm*100)+'%';
-  document.getElementById('mKick').style.width=Math.round(kick*100)+'%';
-  document.getElementById('mMid').style.width=Math.round(mid*100)+'%';
-  document.getElementById('mHi').style.width=Math.round(hi*100)+'%';
-  document.getElementById('mPhase').style.width=Math.round(getBP()*100)+'%';
-
-  gT++;
-}
-
-// ── VIDEO RECORDING ───────────────────────────────────────────
-let mediaRec=null, recChunks=[], recStartTime=0, recTimerID=null, lastBlob=null;
-let isRecording=false;
-
-function toggleVideoRec(){
-  if(!isRecording) startVideoRec();
-  else stopVideoRec();
-}
-
-function startVideoRec(){
-  const stream=C.captureStream(30);
-  // Optionally add audio
-  if(AC&&master){
-    try{
-      const dest=AC.createMediaStreamDestination();
-      master.connect(dest);
-      dest.stream.getAudioTracks().forEach(t=>stream.addTrack(t));
-    } catch(e){}
+  // ── SIGNAL PULSE H ──
+  if (state.seq.signal) {
+    const progress = ((t * state.sigH * 0.18) % 1);
+    const px = cx - 310*sc + progress * 620*sc;
+    const pa = progress < 0.1 ? progress/0.1 : progress > 0.9 ? (1-progress)/0.1 : 1;
+    ctx.save();
+    if (state.seq.glow) { ctx.shadowColor = accentRgba(1); ctx.shadowBlur = state.glow * sc; }
+    ctx.fillStyle = accentRgba(pa);
+    ctx.beginPath(); ctx.arc(px, cy, 3*sc, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = accentRgba(pa * 0.4);
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(px, cy, 8*sc, 0, Math.PI*2); ctx.stroke();
+    ctx.restore();
   }
-  const mimeTypes=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];
-  const mime=mimeTypes.find(m=>MediaRecorder.isTypeSupported(m))||'video/webm';
-  mediaRec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:8000000});
-  recChunks=[];
-  mediaRec.ondataavailable=e=>{if(e.data.size>0)recChunks.push(e.data);};
-  mediaRec.onstop=()=>{
-    lastBlob=new Blob(recChunks,{type:'video/webm'});
-    document.getElementById('dlBtn').style.display='block';
-    elog('VID READY — ↓ DESCARGAR','cyan');
-  };
-  mediaRec.start(100);
-  isRecording=true; recStartTime=Date.now();
-  document.getElementById('recBtn').textContent='⏹ PARAR REC';
-  document.getElementById('recBtn').classList.add('active');
-  document.getElementById('npRec').className='np rec';
-  document.getElementById('recInd').classList.add('show');
-  recTimerID=setInterval(()=>{
-    const s=Math.floor((Date.now()-recStartTime)/1000);
-    document.getElementById('recTimeDisp').textContent=Math.floor(s/60)+':'+(s%60+'').padStart(2,'0');
-  },500);
-  elog('● REC INICIADO','pink');
+
+  // ── SIGNAL PULSE V ──
+  if (state.seq.signal) {
+    const progress2 = ((t * state.sigV * 0.15 + 0.5) % 1);
+    const py = cy - 245*sc + progress2 * 490*sc;
+    const pa2 = progress2 < 0.1 ? progress2/0.1 : progress2 > 0.9 ? (1-progress2)/0.1 : 1;
+    ctx.save();
+    ctx.fillStyle = fgRgba(pa2 * 0.7);
+    ctx.beginPath(); ctx.arc(cx, py, 2*sc, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  // ── SCAN LINE ──
+  if (state.seq.scan) {
+    const scanProgress = ((t * state.scan * 0.12) % 1);
+    const sy = cy - 200*sc + scanProgress * 400*sc;
+    const sa = scanProgress < 0.1 ? scanProgress/0.1 : scanProgress > 0.9 ? (1-scanProgress)/0.1 : 1;
+    ctx.save();
+    ctx.strokeStyle = accentRgba(0.5 * sa);
+    ctx.lineWidth = 0.8;
+    ctx.setLineDash([4*sc, 8*sc]);
+    ctx.beginPath();
+    ctx.moveTo(cx - 280*sc, sy);
+    ctx.lineTo(cx + 280*sc, sy);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+
+  // ── PARTICLES ──
+  if (state.seq.particles) {
+    updateParticles();
+    particles.forEach(p => {
+      const a = state.partAlpha * p.alpha * (1 - Math.abs(p.life - 0.5) * 2);
+      ctx.save();
+      ctx.globalAlpha = a;
+      ctx.fillStyle = accentRgba(0.8);
+      ctx.beginPath();
+      ctx.arc(p.x * (W/520) + cx - W/2, p.y * (H/520) + cy - H/2, p.r*sc, 0, Math.PI*2);
+      // Use absolute positions
+      ctx.restore();
+
+      ctx.save();
+      const absX = cx + (p.x - 260) * sc;
+      const absY = cy + (p.y - 260) * sc;
+      ctx.globalAlpha = a;
+      ctx.fillStyle = accentRgba(0.9);
+      ctx.beginPath();
+      ctx.arc(absX, absY, p.r * sc, 0, Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+    });
+  }
+
+  // ── NODES ──
+  if (state.showNodes) {
+    const nodePts = [
+      [cx, cy-80*sc],[cx, cy+80*sc],
+      [cx-140*sc, cy],[cx+140*sc, cy],
+      [cx-80*sc, cy-80*sc],[cx+80*sc, cy-80*sc],
+      [cx-80*sc, cy+80*sc],[cx+80*sc, cy+80*sc],
+    ];
+    const ioNodes = [
+      [cx-310*sc, cy],[cx+310*sc, cy],
+      [cx, cy-245*sc],[cx, cy+245*sc],
+    ];
+    ctx.save();
+    nodePts.forEach(([x,y]) => {
+      ctx.fillStyle = fgRgba(0.9);
+      ctx.beginPath(); ctx.arc(x, y, 3*sc, 0, Math.PI*2); ctx.fill();
+    });
+    ioNodes.forEach(([x,y]) => {
+      if (state.seq.glow) { ctx.shadowColor = fgRgba(0.8); ctx.shadowBlur = 6*sc; }
+      ctx.fillStyle = fgRgba(0.9);
+      ctx.beginPath(); ctx.arc(x, y, 4*sc, 0, Math.PI*2); ctx.fill();
+    });
+    // Center dot
+    if (state.seq.glow) { ctx.shadowColor = accentRgba(1); ctx.shadowBlur = state.glow*1.5*sc; }
+    ctx.fillStyle = accentRgba(1);
+    ctx.beginPath(); ctx.arc(cx, cy, 4*sc, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  // ── LABELS ──
+  if (state.showLabels) {
+    ctx.save();
+    ctx.font = `${Math.floor(9*sc)}px 'Share Tech Mono', monospace`;
+    ctx.fillStyle = fgRgba(0.35);
+    ctx.letterSpacing = '3px';
+    ctx.textAlign = 'left';
+    ctx.fillText('NODE_A', cx - 276*sc, cy - 190*sc);
+    ctx.fillText('NODE_C', cx - 276*sc, cy + 178*sc);
+    ctx.textAlign = 'right';
+    ctx.fillText('NODE_B', cx + 276*sc, cy - 190*sc);
+    ctx.fillText('NODE_D', cx + 276*sc, cy + 178*sc);
+    ctx.textAlign = 'left';
+    ctx.fillStyle = fgRgba(0.45);
+    ctx.fillText('INPUT',  cx - 308*sc, cy - 6*sc);
+    ctx.fillText('OUTPUT', cx + 152*sc, cy - 6*sc);
+    ctx.textAlign = 'center';
+    ctx.fillStyle = fgRgba(0.4);
+    ctx.fillText('PROCESS  CORE', cx, cy + 74*sc);
+    ctx.restore();
+  }
+
+  // Tick marks on axis
+  if (state.showGrid) {
+    const ticks = [
+      [cx, cy-80*sc],[cx, cy+80*sc],
+      [cx-140*sc, cy],[cx+140*sc, cy],
+      [cx, cy-165*sc],[cx, cy+165*sc],
+      [cx-310*sc, cy],[cx+310*sc, cy],
+    ];
+    ctx.save();
+    ctx.strokeStyle = fgRgba(0.35);
+    ctx.lineWidth = 0.6;
+    ticks.forEach(([x,y]) => {
+      const isH = Math.abs(y-cy) < 2;
+      if (isH) {
+        ctx.beginPath(); ctx.moveTo(x, y-4*sc); ctx.lineTo(x, y+4*sc); ctx.stroke();
+      } else {
+        ctx.beginPath(); ctx.moveTo(x-4*sc, y); ctx.lineTo(x+4*sc, y); ctx.stroke();
+      }
+    });
+    ctx.restore();
+  }
+
+  // Corner brackets
+  if (state.showGrid) {
+    const bx = 280*sc, by = 200*sc, bl = 16*sc;
+    ctx.save();
+    ctx.strokeStyle = fgRgba(0.3);
+    ctx.lineWidth = 0.8;
+    // TL
+    ctx.beginPath(); ctx.moveTo(cx-bx, cy-by+bl); ctx.lineTo(cx-bx, cy-by); ctx.lineTo(cx-bx+bl, cy-by); ctx.stroke();
+    // TR
+    ctx.beginPath(); ctx.moveTo(cx+bx-bl, cy-by); ctx.lineTo(cx+bx, cy-by); ctx.lineTo(cx+bx, cy-by+bl); ctx.stroke();
+    // BL
+    ctx.beginPath(); ctx.moveTo(cx-bx, cy+by-bl); ctx.lineTo(cx-bx, cy+by); ctx.lineTo(cx-bx+bl, cy+by); ctx.stroke();
+    // BR
+    ctx.beginPath(); ctx.moveTo(cx+bx-bl, cy+by); ctx.lineTo(cx+bx, cy+by); ctx.lineTo(cx+bx, cy+by-bl); ctx.stroke();
+    ctx.restore();
+  }
+
+  // Progress bar bottom
+  const durSec = parseInt(document.getElementById('durInput').value) || 30;
+  const loopT = (elapsed % durSec) / durSec;
+  // draw thin bottom bar
+  ctx.save();
+  ctx.fillStyle = fgRgba(0.08);
+  ctx.fillRect(cx - 120*sc, cy + 210*sc, 240*sc, 1);
+  ctx.fillStyle = fgRgba(0.6);
+  ctx.fillRect(cx - 120*sc, cy + 210*sc, 240*sc * loopT, 1);
+  ctx.font = `${Math.floor(8*sc)}px 'Share Tech Mono', monospace`;
+  ctx.fillStyle = fgRgba(0.4);
+  ctx.textAlign = 'center';
+  ctx.fillText(Math.round(loopT * 100) + '%', cx, cy + 224*sc);
+  ctx.restore();
+
+  // Noise grain (subtle)
+  applyGrain(ctx, W, H, 0.025);
+
+  ctx.restore(); // filter
+
+  // Update HUD time
+  const ms = Math.floor((elapsed % durSec) * 1000);
+  const ss = Math.floor((elapsed % durSec));
+  const mm = Math.floor(elapsed / 60);
+  document.getElementById('hud-time').textContent =
+    String(mm).padStart(2,'0') + ':' + String(ss % 60).padStart(2,'0') + ':' + String(ms % 1000).padStart(3,'0');
+
+  requestAnimationFrame(draw);
 }
 
-function stopVideoRec(){
-  if(mediaRec&&mediaRec.state!=='inactive') mediaRec.stop();
-  isRecording=false;
-  clearInterval(recTimerID);
-  document.getElementById('recBtn').textContent='⏺ GRABAR VÍDEO';
-  document.getElementById('recBtn').classList.remove('active');
-  document.getElementById('npRec').className='np';
-  document.getElementById('recInd').classList.remove('show');
-  elog('REC PARADO','acid');
+function strokeRect(ctx, x,y,w,h) {
+  ctx.beginPath();
+  ctx.rect(x,y,w,h);
+  ctx.stroke();
 }
 
-function downloadLast(){
-  if(!lastBlob) return;
-  const url=URL.createObjectURL(lastBlob);
-  const a=document.createElement('a');
-  a.href=url; a.download='arnica_vfx_'+Date.now()+'.webm'; a.click();
-  setTimeout(()=>URL.revokeObjectURL(url),5000);
-  elog('DESCARGANDO .WEBM','cyan');
+// Grain using ImageData
+let grainCanvas, grainCtx;
+function applyGrain(ctx, W, H, alpha) {
+  if (!grainCanvas || grainCanvas.width !== W) {
+    grainCanvas = document.createElement('canvas');
+    grainCanvas.width = W; grainCanvas.height = H;
+    grainCtx = grainCanvas.getContext('2d');
+  }
+  const imgData = grainCtx.createImageData(W, H);
+  const data = imgData.data;
+  for (let i=0; i<data.length; i+=4) {
+    const v = Math.random()*255;
+    data[i]=data[i+1]=data[i+2]=v;
+    data[i+3] = Math.random() * 18;
+  }
+  grainCtx.putImageData(imgData, 0, 0);
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.drawImage(grainCanvas, 0, 0);
+  ctx.restore();
 }
 
-// ── UI HELPERS ────────────────────────────────────────────────
-function updateSlVal(inp,key){
-  const val=parseFloat(inp.value);
-  const el=document.getElementById('sv'+key);
-  if(el) el.textContent=Number.isInteger(val)?val:val.toFixed(key==='dec'?2:1);
-}
-
-function elog(txt,type='acid'){
-  const log=document.getElementById('elog');
-  const d=document.createElement('div'); d.className='eitem';
-  const cols={acid:'rgba(176,255,0,',pink:'rgba(255,45,155,',cyan:'rgba(0,255,238,',orange:'rgba(255,107,0,'};
-  const c=(cols[type]||cols.acid);
-  d.style.borderColor=d.style.color=c+'0.85)';
-  d.style.background=c+'0.05)';
-  d.textContent='▶️ '+txt;
-  log.insertBefore(d,log.firstChild);
-  while(log.children.length>7)log.removeChild(log.lastChild);
-  setTimeout(()=>{d.style.opacity='0.25';},3000);
-}
-
-// ── MOUSE ────────────────────────────────────────────────────
-window.addEventListener('mousemove',e=>{
-  mouseX=e.clientX; mouseY=e.clientY;
-  document.getElementById('cur').style.cssText=`left:${e.clientX}px;top:${e.clientY}px;`;
-  document.getElementById('curDot').style.cssText=`left:${e.clientX}px;top:${e.clientY}px;`;
-  if(layers.parts&&Math.random()<0.35){spawnParticles(e.clientX,e.clientY,2,'rgba(176,255,0,1)');}
-});
-window.addEventListener('click',e=>{
-  if(e.target.closest('.botbar,.topbar')) return;
-  bootAC();if(AC.state==='suspended')AC.resume();
-  spawnParticles(e.clientX,e.clientY,60,'rgba(176,255,0,1)');
-  spawnParticles(e.clientX,e.clientY,20,'rgba(0,255,238,1)');
-  // click ring
-  const r=document.createElement('div'); r.className='click-ring';
-  r.style.left=e.clientX+'px'; r.style.top=e.clientY+'px';
-  document.body.appendChild(r);setTimeout(()=>r.remove(),550);
-  // play sound
-  const ni=Math.floor((e.clientX/W)*8);
-  const noteFreqs=[220,277,330,392,440,523,659,880];
-  lead(noteFreqs[ni%noteFreqs.length]);
-  if(bloomAmt>0){ctx.shadowBlur=bloomAmt*3;ctx.shadowColor='rgba(176,255,0,0.8)';}
-  elog('CLICK → '+noteFreqs[ni%noteFreqs.length]+'Hz','acid');
-});
-window.addEventListener('touchstart',e=>{
-  if(e.target.closest('.botbar,.topbar')) return;
-  Array.from(e.touches).forEach(t=>{
-    spawnParticles(t.clientX,t.clientY,50,'rgba(176,255,0,1)');
-    spawnParticles(t.clientX,t.clientY,15,'rgba(255,45,155,1)');
-    mouseX=t.clientX;mouseY=t.clientY;
+// ─────────────────────────────────────────────
+//  CONTROLS WIRING
+// ─────────────────────────────────────────────
+function wire(id, stateKey, valId, decimals=2) {
+  const el = document.getElementById(id);
+  const vEl = document.getElementById(valId);
+  el.addEventListener('input', () => {
+    state[stateKey] = parseFloat(el.value);
+    if (vEl) vEl.textContent = parseFloat(el.value).toFixed(decimals);
   });
-},{passive:true});
+}
+wire('vSpeed','speed','vSpeedVal',1);
+wire('vSigH','sigH','vSigHVal',1);
+wire('vSigV','sigV','vSigVVal',1);
+wire('vRot','rot','vRotVal',1);
+wire('vScan','scan','vScanVal',1);
+wire('vBright','bright','vBrightVal');
+wire('vCont','contrast','vContVal');
+wire('vGlow','glow','vGlowVal',0);
+wire('vBgAlpha','bgAlpha','vBgAlphaVal');
+wire('vPartAlpha','partAlpha','vPartAlphaVal');
+wire('vHexAlpha','hexAlpha','vHexAlphaVal',1);
+wire('vBgTint','bgTint','vBgTintVal',3);
 
-// ── INIT + LOOP ───────────────────────────────────────────────
-buildToggles();
-// Initial clear
-ctx.fillStyle='#05050a';ctx.fillRect(0,0,W,H);
-elog('SISTEMA LISTO — CLIC PARA ACTIVAR AUDIO','acid');
-elog('PULSA ▶️ TECHNO PARA MÚSICA','acid');
-elog('⏺ PARA GRABAR EL VÍDEO','acid');
+// Toggles
+['Hex','Circles','Grid','Watermark','Nodes','Labels'].forEach(name => {
+  document.getElementById('t'+name).addEventListener('change', e => {
+    state['show'+name] = e.target.checked;
+  });
+});
 
-(function loop(){
-  drawVFX();
-  requestAnimationFrame(loop);
-})();
+// Sequences
+document.querySelectorAll('.seq-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.seq;
+    state.seq[key] = !state.seq[key];
+    btn.classList.toggle('on', state.seq[key]);
+  });
+});
+
+// Color swatches
+function setAccent(color) {
+  state.accent = color;
+  document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+  const match = document.querySelector(`.swatch[data-color="${color}"]`);
+  if (match) match.classList.add('active');
+  document.getElementById('customColorInput').value = color;
+  document.getElementById('colorPicker').value = color;
+}
+document.querySelectorAll('.swatch').forEach(s => {
+  s.addEventListener('click', () => setAccent(s.dataset.color));
+});
+document.getElementById('colorPicker').addEventListener('input', e => setAccent(e.target.value));
+document.getElementById('customColorInput').addEventListener('input', e => {
+  const v = e.target.value;
+  if (/^#[0-9A-Fa-f]{6}$/.test(v)) setAccent(v);
+});
+
+// Reset
+document.getElementById('btnReset').addEventListener('click', () => {
+  state.startTime = null;
+});
+
+// Fullscreen
+document.getElementById('btnFullscreen').addEventListener('click', () => {
+  if (!document.fullscreenElement) {
+    document.getElementById('stage').requestFullscreen?.();
+  } else {
+    document.exitFullscreen?.();
+  }
+});
+
+// ─────────────────────────────────────────────
+//  BOOT
+// ─────────────────────────────────────────────
+requestAnimationFrame(draw);
 </script>
 
 </body>
