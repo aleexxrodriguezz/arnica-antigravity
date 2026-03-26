@@ -80,7 +80,7 @@ export default function MotionPage() {
         <FadeUp delay={0.2}>
           <div className="mb-24 w-full max-w-5xl mx-auto h-[80vh] min-h-[600px] relative rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] ring-1 ring-black/5 dark:ring-white/10">
             <iframe
-              src="/vfx-old.html"
+              src="/vfx-hero.html"
               className="w-full h-full absolute inset-0 border-none bg-transparent"
               title="Estudio de Música VFX (Legacy)"
             />
