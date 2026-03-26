@@ -12,17 +12,16 @@ import { cn } from '@/lib/utils'
 
 const NAV_LINKS = [
   { 
-    label: 'Agencia Audiovisual', 
+    label: 'Discográfica', 
     href: '/agencia',
     subItems: [
       { label: 'Artistas', href: '/artistas' }
     ]
   },
-  { label: 'Atrezo/PLV', href: '/atrezo' },
-  { label: 'Contáctanos',  href: '/contactanos' },
-  { label: 'Producción', href: '/produccion' },
-  { label: 'Radio',      href: '/radio' },
+  { label: 'Eventos', href: '/produccion' },
+  { label: 'Atrezo / PLV', href: '/atrezo' },
   { label: 'VFX',        href: '/motion' },
+  { label: 'Contacto',  href: '/contactanos' },
 ]
 
 const GLITCH_CHARS = '@#$%&!?*<>~^'
