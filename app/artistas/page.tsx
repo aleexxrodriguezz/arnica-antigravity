@@ -41,7 +41,7 @@ export default function ArtistasPage() {
                 </p>
               </MaskReveal>
               <ParallaxLayer speed={0.05}>
-                <h1 className="text-foreground leading-[0.9] font-sans font-semibold tracking-[0.15em] uppercase" style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)' }}>
+                <h1 className="text-foreground leading-[0.9] font-semibold tracking-[0.15em] uppercase" style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', fontFamily: 'var(--font-orbitron)' }}>
                   FERNANDO<br />
                   <span className="text-primary italic">BALLESTEROS</span>
                 </h1>

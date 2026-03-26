@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Space_Grotesk, DM_Sans, Inconsolata } from 'next/font/google'
+import { Space_Grotesk, DM_Sans, Inconsolata, Orbitron } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { ThemeProvider } from '@/components/theme-provider'
 import { LenisProvider } from '@/components/lenis-provider'
@@ -24,6 +24,12 @@ const inconsolata = Inconsolata({
   weight: ['400', '700'],
 })
 
+const orbitron = Orbitron({
+  subsets: ['latin'],
+  variable: '--font-orbitron',
+  weight: ['400', '500', '600', '700', '800', '900'],
+})
+
 export const metadata: Metadata = {
   title: 'Arnica — Agencia de Publicidad',
   description: 'Arnica es una agencia de publicidad tecnológica y creativa. Radio, Producción musical con IA, Motion Graphics, 3D Render y Portfolio.',
@@ -46,7 +52,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" suppressHydrationWarning data-scroll-behavior="smooth">
-      <body className={`${spaceGrotesk.variable} ${dmSans.variable} ${inconsolata.variable} font-sans antialiased`}>
+      <body className={`${spaceGrotesk.variable} ${dmSans.variable} ${inconsolata.variable} ${orbitron.variable} font-sans antialiased`}>
         <ThemeProvider>
           <LenisProvider>
             {children}
