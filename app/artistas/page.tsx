@@ -26,7 +26,7 @@ export default function ArtistasPage() {
                 className="object-cover brightness-[0.7] grayscale-[0.2]"
                 priority
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black dark:from-background via-transparent to-transparent" />
             </div>
           </ParallaxLayer>
         </div>
