@@ -13,6 +13,7 @@ export default function ArtistasPage() {
 
   return (
     <PageShell>
+      <div style={{ fontFamily: 'var(--font-orbitron)' }}>
       {/* Hero Section */}
       <section className="relative min-h-screen flex flex-col justify-end overflow-hidden">
         {/* Background Image with Parallax */}
@@ -169,6 +170,7 @@ export default function ArtistasPage() {
           </div>
         </div>
       </section>
+      </div>
     </PageShell>
   )
 }
