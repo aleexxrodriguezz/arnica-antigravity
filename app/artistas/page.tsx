@@ -41,7 +41,7 @@ export default function ArtistasPage() {
                 </p>
               </MaskReveal>
               <ParallaxLayer speed={0.05}>
-                <h1 className="text-foreground leading-[0.9] font-semibold tracking-[0.15em] uppercase" style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', fontFamily: 'var(--font-orbitron)' }}>
+                <h1 className="text-white dark:text-foreground leading-[0.9] font-semibold tracking-[0.15em] uppercase" style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', fontFamily: 'var(--font-orbitron)' }}>
                   FERNANDO<br />
                   <span className="text-primary italic">BALLESTEROS</span>
                 </h1>
@@ -49,7 +49,7 @@ export default function ArtistasPage() {
             </div>
             <div className="lg:text-right">
               <FadeUp delay={0.2}>
-                <p className="text-muted-foreground text-lg max-w-md lg:ml-auto leading-relaxed text-pretty">
+                <p className="text-white/80 dark:text-muted-foreground text-lg max-w-md lg:ml-auto leading-relaxed text-pretty">
                   Un arquitecto del ritmo. DJ y Productor Musical cuya visión redefine el sonido comercial y de club a través de la elegancia técnica y la intuición creativa.
                 </p>
               </FadeUp>
